@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '../views/Home.vue'
-import routerDown from './down'
-Vue.use(Router)
+import taskcenter from '../views/taskcenter/index'
+import routeTaskCenter from './taskCenter'
+import routeNew from './new'
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -11,14 +12,10 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: taskcenter
     },
-    {
-      path: '/about',
-      name: 'about',
-      component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-    },
-   ...routerDown,
+    ...routeTaskCenter,
+      ...routeNew,
     {
       path: '*',
       redirect:"/"
