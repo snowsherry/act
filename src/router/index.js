@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import taskcenter from '../views/taskcenter/index'
 import routeTaskCenter from './taskCenter'
 import routeNew from './new'
+import routeBet from './bet'
+import routeChallenge from './challenge'
 Vue.use(Router);
 
 export default new Router({
@@ -16,6 +18,8 @@ export default new Router({
     },
     ...routeTaskCenter,
       ...routeNew,
+      ...routeBet,
+      ...routeChallenge,
     {
       path: '*',
       redirect:"/"

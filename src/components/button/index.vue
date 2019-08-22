@@ -63,4 +63,20 @@
         font-weight:400;
         color:rgba(255,255,255,1);
     }
+    .middle{
+        width:287px;
+        height:45px;
+        border-radius:5px;
+        text-align: center;
+        line-height: 45px;
+        &.red{
+            background:linear-gradient(140deg,rgba(255,89,68,1) 0%,rgba(255,0,8,1) 100%);
+            box-shadow:0px 3px 7px 0px rgba(255,142,0,0.43);
+            font-size:17px;
+            font-family:PingFangSC;
+            font-weight:500;
+            color:rgba(255,255,255,1);
+            margin: 0 auto;
+        }
+    }
 </style>

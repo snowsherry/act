@@ -4,7 +4,7 @@
         <div class="box will-open" v-if="!opened">
             <h2>恭喜您 <br />获得一个新人专享红包</h2>
             <p class="tip">立刻打开即可获得</p>
-            <div class="open-btn"></div>
+            <div class="open-btn" @click="goOpen"></div>
         </div>
         <div class="box opened" v-else>
             <h4>恭喜你，成功获取财神红包</h4>
@@ -21,15 +21,40 @@
 </template>
 
 <script>
+    import {goWxAuthor,getAccessToken} from '../../api/wx'
     export default {
         name: "index",
         data(){
             return {
-                    opened:true,
+                opened:false,
+                code:"",
+            }
+        },
+        beforeMount(){
+            let query=this.$route.query;
+            if(query&&query.code){
+                this.code=query.code;
+                //获取用户的信息
+                getAccessToken(this.code).then(res=>{
+                    console.log('res',res);
+                }).catch(e=>{
+                    console.error(e);
+                });
             }
         },
         methods:{
+            goOpen(){
+                if(this.code){//已经登陆有code了
+                    //开启红包 带上用户的信息
+                }else{//未登陆
+                    let state='test';
+                    let url=window.location.href;
+                    /*  console.log('url',url);
+                      return;*/
+                    goWxAuthor(url,state);
+                }
 
+            },
         }
     }
 </script>

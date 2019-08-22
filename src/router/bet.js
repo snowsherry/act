@@ -1,0 +1,25 @@
+module.exports=[
+    {
+        path:"/bet",
+        name:'bet',
+        component:()=>import('@/views/bet/index'),
+        redirect:'/bet/main',
+        children:[
+            {
+                path:"main",
+                name:'betMain',
+                component:()=>import('@/views/bet/main')
+            },
+            {
+                path:"rank",
+                name:'betRank',
+                component:()=>import('@/views/bet/rank')
+            },
+            {
+                path:"mine",
+                name:'betMine',
+                component:()=>import('@/views/bet/mine')
+            }
+        ]
+    }
+]

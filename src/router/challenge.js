@@ -1,0 +1,12 @@
+module.exports=[
+    {
+        path:"/challenge",
+        name:"Challenge",
+        component:()=>import('@/views/challenge')
+    },
+    {
+        path:"/challenge/school",
+        name:"School",
+        component:()=>import('@/views/challenge/school')
+    },
+]
