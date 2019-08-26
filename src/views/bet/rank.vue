@@ -3,13 +3,21 @@
         <van-tabs v-model="active" :line-width="40" :line-height="2" :color="'#1374E5'">
             <van-tab title="个人排行榜">
                 <div class="rank-part personal">
-                    <Card class="card"></Card>
+                    <Card class="card" :type="'personal'"></Card>
                     <rankItem :itemInfo="itemInfo" :type="'personal'" :own="'mine'"></rankItem>
                     <rankItem v-for="item in items" :itemInfo="item" :type="'personal'" :own="'other'"></rankItem>
                 </div>
             </van-tab>
             <van-tab title="高校排行榜">
-                <div class="rank-part school"></div>
+                <div class="rank-part school">
+                    <div class="school-nav">
+                        <div class="school-nav-item cur">个人摘星榜</div>
+                        <div class="school-nav-item">个人胜率榜</div>
+                        <div class="school-nav-item">战队摘星榜</div>
+                        <div class="school-nav-item">战队胜率榜</div>
+                    </div>
+                    <Card class="card" :type="'school'"></Card>
+                </div>
             </van-tab>
         </van-tabs>
     </div>
@@ -88,6 +96,33 @@
         .personal{
             .card{
                 margin:12px auto ;
+            }
+        }
+        .school{
+            .school-nav{
+                width: 345px;
+                height: 28px;
+                display: flex;
+                justify-content: space-between;
+                background: #E3E3E3;
+                border-radius: 14px;
+                margin: 15px auto;
+                .school-nav-item{
+                    width: 81px;
+                    height: 100%;
+                    font-size:12px;
+                    font-family:PingFangSC;
+                    font-weight:400;
+                    color:rgba(94,101,108,1);
+                    line-height:28px;
+                    text-align: center;
+                    border-radius: 14px;
+                    &.cur{
+                        background: #1374E5;
+                        color: #FFFFFF;
+                    }
+                }
+
             }
         }
     }

@@ -4,12 +4,38 @@
             <span class="season">2019.07.26-08.02赛季</span>
             <span class="update">数据更新：07.31 14:15</span>
         </div>
-        <div class="center">
+        <div class="center" v-if="type=='personal'">
             <h4>本赛季奖池</h4>
             <div class="pool">
                 <span v-for="i in '1000'">{{i}}</span>
             </div>
             <div class="title">赛季结束满10星玩家可参与瓜分</div>
+        </div>
+        <div class="prize" v-else>
+            <div class="prize-item">
+                <div class="s1">
+                    <img src="../../assets/image/rank/medal-gold.png">
+                </div>
+                <span>奖励详情从后台抓取奖励详情从后台抓取</span>
+            </div>
+            <div class="prize-item">
+                <div class="s1">
+                    <img src="../../assets/image/rank/medal-silver.png">
+                </div>
+                <span>奖励详情从后台抓取奖励详情从后台抓取</span>
+            </div>
+            <div class="prize-item">
+                <div class="s1">
+                    <img src="../../assets/image/rank/medal-bronze.png">
+                </div>
+                <span>奖励详情从后台抓取奖励详情从后台抓取</span>
+            </div>
+            <div class="prize-item">
+                <div class="s1">
+                    4-10名
+                </div>
+                <span>奖励详情从后台抓取奖励详情从后台抓取</span>
+            </div>
         </div>
     </div>
 </template>
@@ -17,13 +43,18 @@
 <script>
     export default {
         name: "card",
+        props:{
+            type:{
+                type:String
+            }
+        }
     }
 </script>
 
 <style scoped lang="less">
     .card{
         width: 345px;
-        height:162px;
+        //height:162px;
         background:linear-gradient(134deg,rgba(10,0,180,1) 0%,rgba(77,67,255,1) 100%);
         border-radius:6px;
         .top{
@@ -47,7 +78,32 @@
                 color:rgba(138,148,255,1);
             }
         }
+        .prize{
+            padding-top: 15px;
+            padding-bottom: 6px;
+            .prize-item{
+                width: 100%;
+                box-sizing: border-box;
+                padding:0 0 0 14px ;
+                height: 18px;
+                margin-bottom: 12px;
+                display: flex;
+                font-size:13px;
+                font-family:PingFangSC;
+                font-weight:500;
+                color:rgba(255,255,255,1);
+                line-height: 24px;
+                .s1{
+                    width: 50px;
+                    img{
+                        width: 18px;
+                    }
+                }
+
+            }
+        }
         .center{
+            padding-bottom:30px;
             h4{
                 font-size:12px;
                 font-family:PingFangSC;

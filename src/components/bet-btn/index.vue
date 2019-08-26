@@ -1,7 +1,7 @@
 <template>
     <div class="bet-btn" :class="type">
         <p class="txt">{{percentage}}%股民看{{trend}}</p>
-        <div class="btn">看{{trend}}</div>
+        <div class="btn" @click="handleClick">看{{trend}}</div>
     </div>
 </template>
 
@@ -15,13 +15,22 @@
             },
             percentage:{
                 type:Number,
+            },
+            clickEvent:{
+                type:Function
             }
+
         },
         computed:{
            trend(){
                return this.type=='raise'?'涨':'跌'
            }
         },
+        methods:{
+            handleClick(){
+                this.clickEvent&&this.clickEvent(this.type);
+            }
+        }
     }
 </script>
 

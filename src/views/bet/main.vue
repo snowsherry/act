@@ -10,6 +10,25 @@
                 </van-swipe-item>
             </van-swipe>
         </div>
+        <div class="popbg" v-show="popBox.show">
+            <div class="popbox-bet">
+                <div class="content raise">
+                    <div class="close" @click="closePopBox"></div>
+                    <div class="ball">看涨</div>
+                    <h3>预言8月17日“股票名称”涨跌</h3>
+                    <h4>我的金币总数：10000</h4>
+                    <div class="line"></div>
+                    <h5>选择预言金币</h5>
+                    <div class="score-part">
+                        <div class="score-part-item" v-for="(score,i) in socres" :class="[{'selected':i===0}]">{{score}}</div>
+                    </div>
+                    <div class="tip">
+                        猜对预计可赢得<span>40</span>金币，加<span>1</span>颗星
+                    </div>
+                    <div class="bet-btn">我要看涨</div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -24,7 +43,12 @@
     export default {
         name: "main",
         data(){
-            return {}
+            return {
+                socres:[20,50,80,100],
+                popBox:{
+                    show:false,
+                }
+            }
 
         },
         components:{
@@ -34,7 +58,10 @@
         methods:{
             ...mapMutations('bet',{
                 setNav:SET_NAV
-            })
+            }),
+            closePopBox(){
+
+            }
         },
         beforeMount(){
             this.setNav('main');
@@ -43,6 +70,7 @@
 </script>
 
 <style scoped lang="less">
+    @import "../../style/popbox";
     .main{
         min-height: 100vh;
         overflow: hidden;

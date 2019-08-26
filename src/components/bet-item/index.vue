@@ -18,9 +18,15 @@
             <div class="detail">个股详情 <img src="../../assets/image/bet/icon-arrow-to.png" width="6"> </div>
         </div>
         <div class="k-line"></div>
-        <div class="select-area">
-            <bet-btn :percentage="40" :type="'raise'"></bet-btn>
-            <bet-btn :percentage="60" :type="'fall'"></bet-btn>
+        <div class="select-area" v-if="!betted">
+            <bet-btn :percentage="40" :type="'raise'" :click-event="doBet"></bet-btn>
+            <bet-btn :percentage="60" :type="'fall'"  :click-event="doBet"></bet-btn>
+        </div>
+        <div  v-else>
+            <rate-bar :rates="[100,0]"></rate-bar>
+            <div class="selected">
+                您已选择看<span :class="trend">{{trend=='raise'?'涨':'跌'}}</span>
+            </div>
         </div>
         <p class="tip">每个交易日13:00预言截止 16:15公布结果 <br />13:05可预言下个交易日</p>
     </div>
@@ -28,10 +34,25 @@
 
 <script>
     import betBtn from '../../components/bet-btn'
+    import rateBar from '../../components/rate-bar'
     export default {
         name: "index",
         components:{
-            betBtn
+            betBtn,
+            rateBar,
+        },
+        data(){
+            return {
+                    betted:false,
+                    trend:""
+            }
+        },
+        methods:{
+            doBet(aim){
+                console.log('aim',aim)
+                this.betted=true;
+                this.trend=aim;
+            }
         }
     }
 </script>
@@ -134,6 +155,27 @@
             display: flex;
             justify-content: space-between;
         }
+        .selected{
+            margin: 0 auto 15px;
+            width:165px;
+            height:46px;
+            background:rgba(251,251,251,1);
+            box-shadow:0px 2px 8px 0px rgba(236,236,236,1),0px 0px 6px 0px rgba(255,255,255,1);
+            border-radius:23px;
+            line-height: 46px;
+            text-align: center;
+            font-size:20px;
+            font-family:PingFangSC;
+            font-weight:500;
+            color: #3A3E42;
+            .raise{
+                color: #EA3424;
+            }
+            .fall{
+               color:  #18AB55
+            }
+
+        }
         .tip{
             font-size:11px;
             font-family:PingFangSC;
@@ -141,6 +183,7 @@
             color:rgba(94,101,108,1);
             line-height:14px;
             text-align: center;
+            height: 28px;
         }
 
     }
