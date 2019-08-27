@@ -22,13 +22,19 @@
             </div>
         </div>
         <div class="popbg" v-show="popBox.show">
-            <div class="popbox-chance">
+            <div class="popbox-chance" v-show="popBox.school.show">
                 <div class="content">
                     <div class="close" @click="closePopBox"></div>
                     <h3>恭喜您获得一次猜涨跌机会 <br />代表你的学校出战，参与高校排行！</h3>
                     <h4>提交学校信息可再获得一次猜涨跌机会</h4>
                     <Cbutton size="middle" type="red" txt="完善我的学校信息" class="big-btn sign-btn" :clickEvent="goSchool"></Cbutton>
                 </div>
+            </div>
+            <div class="popbox-chanceOver" v-show="popBox.chanceOver.show">
+                <red-bag :type="'chance'" :close-event="closePopBoxChance"></red-bag>
+            </div>
+            <div class="popbox-guesseResult" v-show="popBox.guesseResult.show">
+                <red-bag :type="'result'" :close-event="closePopBoxResult">></red-bag>
             </div>
         </div>
     </div>
@@ -40,19 +46,34 @@
     import Count from '../../components/count'
     import {INIT_JOIN_INFO,SET_JOIN_INFO} from '../../store/school'
     import {getSeasonDetail} from '../../api/challenge'
+    import redBag from '../../components/red-bag'
     export default {
         name: "index",
         components:{
             Cbutton,
-            Count
+            Count,
+            redBag
         },
         data(){
             return{
                 signed:false,
                 popBox:{
-                    show:false,
+                    show:true,
+                    mobile:{
+                        show:false,
+                    },
+                    school:{
+                        show:false,
+                    },
+                    chanceOver:{
+                        show:false,
+                    },
+                    guesseResult:{
+                        show:true,
+                    }
+
                 },
-                rule:null,
+                rule:{},
             }
         },
         computed:{
@@ -88,6 +109,14 @@
             },
             closePopBox(){
                 this.popBox.show=false;
+            },
+            closePopBoxChance(){
+                this.popBox.chanceOver.show=false;
+                this.closePopBox();
+            },
+            closePopBoxResult(){
+                this.popBox.guesseResult.show=false;
+                this.closePopBox();
             },
             getRule(){
                 getSeasonDetail({id:1}).then(res=>{

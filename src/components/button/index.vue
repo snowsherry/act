@@ -8,7 +8,7 @@
         props:{
             type:{
                 type:String,
-                default:""// add get finish
+                default:""// get(领取) invite finish
             },
             txt:{
                 type:String,
@@ -28,6 +28,7 @@
         },
         methods:{
             handleButtonClick(){
+                if(this.type=='finish') return;
                 this.clickEvent&&this.clickEvent();
             }
         }
@@ -44,7 +45,7 @@
     color: #ffffff;
     font-size: 13px;
     font-weight: 400;
-    &.add{
+    &.invite{
         background:#FFA500 ;
     }
     &.finish{

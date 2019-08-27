@@ -15,7 +15,7 @@
            </div>
             <div class="tip">{{tip}}</div>
         </div>
-       <campus-button :txt="txt"></campus-button>
+       <campus-button :txt="txt" :type="hasFinish?'finish':type=='bag'?'invite':'get'" :clickEvent="handleClick"></campus-button>
     </div>
 </template>
 
@@ -27,6 +27,9 @@
             campusButton
         },
         props:{
+            clickEvent:{
+              type:Function
+            },
             type:{
                 type:String,//bag coin
             },
@@ -50,6 +53,11 @@
                 type:String,//按钮文案
             }
 
+        },
+        methods:{
+            handleClick(){
+                this.clickEvent&&this.clickEvent();
+            }
         }
     }
 </script>

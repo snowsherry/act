@@ -33,6 +33,7 @@
 
 <script>
     import {mapState,mapGetters,mapMutations} from 'vuex'
+    import {ADD_COIN} from '../../store/user'
     import {Withdraw} from "../../api/coin";
     import Cbutton from '../../components/button'
     import Vue from 'vue';
@@ -45,6 +46,7 @@
         },
         data(){
             return {
+                isDrawing:false,
                 cur:null,
                 availableDrawAmount:[5,20,50,100],
             }
@@ -59,6 +61,9 @@
             })
         },
         methods:{
+            ...mapMutations('user',{
+                addCoin:ADD_COIN
+            }),
             chooseItem(moneny){
                 this.cur=this.cur==moneny?null:moneny;
             },
@@ -75,10 +80,18 @@
                     Toast.fail('金币不足！');
                     return;
                 }
+                if(this.isDrawing)return;
+                this.isDrawing=true;
                 Withdraw({
                     coin:coin
                 }).then(res=>{
-                    console.log('Withdraw',res)
+                    this.isDrawing=false;
+                  if(res.data.code===0){
+                      Toast.success('已成功申请');
+                      this.addCoin(-coin);
+                  }else{
+                      Toast.fail(res.data.message);
+                  }
                 })
             }
         }

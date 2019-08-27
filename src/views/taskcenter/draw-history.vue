@@ -1,9 +1,31 @@
 <template>
     <div class="draw-history">
         <div class="draw-list" v-if="list">
-            <div class="draw-item" v-for="i in 4">
+                <van-list
+                        v-model="loading"
+                        :finished="finished"
+                        finished-text="没有更多了"
+                        @load="getData"
+                >
+                    <div class="draw-item" v-for="item in list" :key="item.id">
+                        <div class="draw-item-left">
+                            <h2>微信提现（{{item.wechatName}}）</h2>
+                            <P class="date">申请时间：{{item.createTime}}</P>
+                            <p class="wechat">提现微信号：{{weChatName}}</p>
+                        </div>
+                        <div class="draw-item-right">
+                            <div class="status" v-if="item.auditingStatus===0">处理中</div>
+                            <div class="status done" v-else-if="item.auditingStatus==1">已到账</div>
+                            <div class="status failed" v-else-if="item.auditingStatus==-1">失败</div>
+                            <div class="amount"><span>{{item.money}}</span>元</div>
+                        </div>
+                    </div>
+
+            </van-list>
+
+            <!--<div class="draw-item" v-for="i in 4">
                 <div class="draw-item-left">
-                    <h2>微信提现（用户昵称）</h2>
+                    <h2>微信提现（{{weChatName}}）</h2>
                     <P class="date">申请时间：2019-08-15 14:34</P>
                     <p class="wechat">提现微信号：哈哈哈哈哈</p>
                 </div>
@@ -11,7 +33,7 @@
                     <div class="status">处理中</div>
                     <div class="amount"><span>10</span>元</div>
                 </div>
-            </div>
+            </div>-->
         </div>
         <div class="empty" v-else>
             <empty-record :txt="'暂无记录'"></empty-record>
@@ -20,16 +42,57 @@
 </template>
 
 <script>
+    import {mapState} from 'vuex'
     import emptyRecord from '../../components/empty-record'
+    import {GetWithdrawHistory} from '../../api/coin'
+    import Vue from 'vue';
+    import { List } from 'vant';
+
+    Vue.use(List);
     export default {
         name: "drawHistory",
         data(){
             return {
-                list:null,
+                list:[],
+                pageIndex:0,
+                pageSize:10,
+                pages:10,
+                loading: false,
+            }
+        },
+        computed:{
+          ...mapState('user',{
+              weChatName:'weChatName'
+          }),
+            finished(){
+              return this.pageIndex>=this.pages;
             }
         },
         components:{
             emptyRecord
+        },
+        beforeMount(){
+        },
+        methods:{
+            getData(){
+                if(this.pageIndex>=this.pages){
+                    return;
+                }else{
+                    this.getDrawHistory();
+                }
+            },
+            getDrawHistory(){
+                GetWithdrawHistory({
+                    pageIndex:this.pageIndex,
+                    pageSize:this.pageSize
+                }).then(res=>{
+                    let data=res.data.data;
+                    this.pages=Math.ceil(data.totalItems/this.pageSize);
+                    this.list.push(...data.items)
+                    this.loading=false;
+                    this.pageIndex++;
+                })
+            }
         }
     }
 </script>

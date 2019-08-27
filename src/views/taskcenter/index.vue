@@ -22,7 +22,7 @@
                 <span>任务列表</span>
             </div>
             <div class="task-list">
-                <task-item v-for="item in taskInfo" :key="item.title"
+                <task-item v-for="(item,k) in taskInfo" :key="item.title"
                            :title="item.title"
                            :tip="item.tip"
                            :amount="item.amount"
@@ -30,7 +30,7 @@
                            :has-finish="item.hasFinish"
                            :times="item.times"
                            :txt="item.txt"
-
+                           :clickEvent="()=>{handleTaskClick(k)}"
                 ></task-item>
             </div>
         </div>
@@ -69,22 +69,31 @@
             })
         },
         beforeMount(){
-            GetMissionOverview().then(res=>{
-                console.log('GetMissionOverview',res);
-            })
+            this.GetMissionOverview();
             this.getCoinHistory();
         },
         data() {
             return{
+                MissionOverview:[],
                 taskInfo:[
                     {
-                        title:"添加自选股",
-                        tip:"关注感兴趣的股票，添加至自选列表",
+                        key:'',
+                        title:"分享朋友圈",
+                        tip:"通过具有分享页卡到朋友圈，增加积分",
                         type:"coin",
-                        amount:100,
+                        amount:500,
                         times:[1,3],
                         hasFinish: false,
-                        txt:'立即添加'
+                        txt:'立即领取'
+                    },
+                    {
+                        title:"每日猜涨跌",
+                        tip:"参与猜涨跌游戏，至少猜测一支股票",
+                        type:"coin",
+                        amount:500,
+                        times:[1,3],
+                        hasFinish: false,
+                        txt:'立即领取'
                     },
                     {
                         title:"邀请1个好友",
@@ -93,7 +102,7 @@
                         amount:9,
                         times:[],
                         hasFinish: false,
-                        txt:'点击领取'
+                        txt:'立即邀请'
                     }
                 ],
                 coinItem:{
@@ -103,6 +112,24 @@
             }
         },
         methods:{
+            GetMissionOverview(){
+                GetMissionOverview().then(res=>{
+                    console.log('GetMissionOverview',res);
+                    if(res.data.code==0){
+                        this.MissionOverview=res.data.data;
+                        this.MissionOverview.forEach((item,k)=>{
+                            let singleTask=this.taskInfo[k];
+                            let extra={
+                                times:[item.curMissionTime,item.missionTimeLimted],
+                                hasFinish:item.curMissionTime>=item.missionTimeLimted?true:false,
+                                txt:item.curMissionTime>=item.missionTimeLimted?'已完成':singleTask.txt
+                            }
+                            this.taskInfo[k]=Object.assign(singleTask,extra);
+                        })
+                    }
+
+                })
+            },
             goCoinHistory(){
                 this.$router.push('/coin-history');
                 return;
@@ -121,6 +148,9 @@
                         this.coinHistory=res.data.data.items;
                     }
                 })
+            },
+            handleTaskClick(k){
+                console.log('k',k)
             }
         }
     }

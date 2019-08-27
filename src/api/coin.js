@@ -8,9 +8,10 @@ export  const Withdraw=(params)=>{
     })
 }
 
-export  const GetWithdrawHistory=()=>{
+export  const GetWithdrawHistory=(params)=>{
     return  AxiosRequst({
         url:baseUrlCoin+'/GetWithdrawHistory',
+        params:params
     })
 }
 
