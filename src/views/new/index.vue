@@ -22,24 +22,33 @@
 
 <script>
     import {goWxAuthor,getAccessToken} from '../../api/wx'
+    import {InviteByWechat} from '../../api/mission'
     export default {
         name: "index",
         data(){
             return {
                 opened:false,
                 code:"",
+                inviteCode:"",
+
             }
         },
         beforeMount(){
             let query=this.$route.query;
+            this.inviteCode=query.inviteCode;
             if(query&&query.code){
                 this.code=query.code;
                 //获取用户的信息
-                getAccessToken(this.code).then(res=>{
+               /* getAccessToken(this.code).then(res=>{
                     console.log('res',res);
                 }).catch(e=>{
                     console.error(e);
-                });
+                });*/
+                InviteByWechat({
+                    appId:'wxa0640e322b3416ee',
+                    code:code,
+                    inviteCode:this.inviteCode
+                })
             }
         },
         methods:{

@@ -1,25 +1,69 @@
 <template>
     <div class="sign-in">
         <div class="sign-in-top">
-            <div class="tip">已连续签到1天</div>
-            <div class="sign-btn">签到</div>
+            <div class="tip">已连续签到{{days}}天</div>
+            <div class="sign-btn" @click="goSign" v-if="!signed">签到</div>
+            <div class="sign-btn done" v-else>已签到</div>
         </div>
-        <div class=""></div>
+        <!--<div class=""></div>-->
         <div class="sign-days">
-            <div class="sign-item" v-for="i in 7">
+            <div class="sign-item" v-for="(coin,k) in coinSteps" :key="coin" :class="[{'has':(k+1)<=days}]">
                 <div class="sign-item-top">
                     <div class="wrapper"></div>
-                    <div class="inner">126</div>
+                    <div class="inner">{{coin}}</div>
                 </div>
-                <p>2天</p>
+                <p>{{(k+1)<=days?'已签':`${k+1}天`}}</p>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import {SignIn,GetSignInfo} from "../../api/mission";
+
     export default {
-        name: "index"
+        name: "index",
+        data(){
+            return {
+                signed:false,
+                sigining:false,
+                coinSteps:[200,300,400,500,600,700,800],
+                days:0,
+            }
+        },
+        props:{
+            clickEvent:{
+                type:Function,
+            }
+
+        },
+        methods:{
+            goSign(){
+                if(this.sigining) return;
+                this.sigining=true;
+                SignIn().then(res=>{
+                    console.log('sign-res',res)
+                    this.sigining=false;
+                    if(res.data.code==0){
+                        //签到成功
+                        this.signed=true;
+                        this.days=this.days+1;
+                    }
+                    }).catch(e=>{
+                        console.error(e)
+                    })
+                }
+        },
+        beforeMount(){
+            GetSignInfo().then(res=>{
+                console.log('GetSignInfo',res)
+                if(res.data.code==0){
+                    let data=res.data.data;
+                    this.signed=data.todaySign;
+                    this.days=data.doubleHit;
+                }
+            })
+        }
     }
 </script>
 
@@ -53,7 +97,7 @@
             line-height: @sign-in-top-height;
             color: #ffffff;
             font-size: 13px;
-            .done{
+            &.done{
                 background: #C6D0DB;
             }
         }
@@ -110,6 +154,20 @@
                 font-family:PingFangSC;
                 font-weight:500;
                 color:rgba(255,165,0,1);
+            }
+            &.has{
+                .sign-item-top{
+                    .wrapper{
+                        background:rgba(242,246,249,1);
+                        opacity: 1;
+                    }
+                    .inner{
+                        background:linear-gradient(180deg,rgba(218,218,218,1) 0%,rgba(171,171,171,1) 100%);
+                    }
+                }
+                p{
+                    color:#939EAA ;
+                }
             }
         }
 

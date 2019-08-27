@@ -5,7 +5,7 @@
             <Count :txt="'已有-人参与'" :count="1000"></Count>
             <div class="box unsgin" v-if="!joinInfo.joined">
                 <div class="roof"></div>
-                <div class="img"></div>
+                <div class="img"><img :src="rule['imgUrl']"  v-if="rule" width="308" height="146"/></div>
                 <Cbutton size="middle" type="red" txt="立即报名" class="big-btn sign-btn" :clickEvent="signIn"></Cbutton>
             </div>
             <div class="box signed" v-else>
@@ -18,9 +18,7 @@
         <div class="rules">
             <div class="title"><span>大赛流程</span></div>
             <div class="content">
-                <p>1.内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式</p>
-                <p>2.内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式</p>
-                <p>3.内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式内容样式</p>
+               <P>{{rule['rules']}}</P>
             </div>
         </div>
         <div class="popbg" v-show="popBox.show">
@@ -41,6 +39,7 @@
     import Cbutton from '../../components/button'
     import Count from '../../components/count'
     import {INIT_JOIN_INFO,SET_JOIN_INFO} from '../../store/school'
+    import {getSeasonDetail} from '../../api/challenge'
     export default {
         name: "index",
         components:{
@@ -52,7 +51,8 @@
                 signed:false,
                 popBox:{
                     show:false,
-                }
+                },
+                rule:null,
             }
         },
         computed:{
@@ -69,8 +69,9 @@
             }
         },
         beforeMount(){
-            this.initJoinInfo();//异步的事件哇
-            console.log('dddd',this.joinInfo)
+           /* this.initJoinInfo();//异步的事件哇
+            console.log('dddd',this.joinInfo);*/
+            this.getRule();
         },
         methods:{
             ...mapMutations('school',{
@@ -87,6 +88,14 @@
             },
             closePopBox(){
                 this.popBox.show=false;
+            },
+            getRule(){
+                getSeasonDetail({id:1}).then(res=>{
+                    console.log('getSeasonDetail',res);
+                    if(res.data.code==0){
+                        this.rule=res.data.data;
+                    }
+                })
             }
         }
     }

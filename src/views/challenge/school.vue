@@ -1,20 +1,26 @@
 <template>
     <div class="school">
         <div class="school-list">
-            <div class="alp-part" v-for=" j in 4">
+            <!--<div class="alp-part" v-for=" j in 4">
                 <div class="alp">A</div>
                 <div class="items">
                     <div class="item" v-for="i in 4">学校名称</div>
                 </div>
-            </div>
+            </div>-->
+            <van-index-bar>
+                <div v-for="(list,alpha) in schools">
+                <van-index-anchor  :index="alpha"/>
+                <van-cell   v-for="schoolItem in list" :title="schoolItem.team_name" @click="handleClick(schoolItem)"/>
+                </div>
+            </van-index-bar>
         </div>
         <div class="popbg" v-show="popBox.show">
             <div class="popbox-school">
                 <div class="content">
                     <div class="close" @click="closePopBox"></div>
-                    <h4>您将代表<br /><span>上海财经大学</span><br />参与高校争霸赛</h4>
+                    <h4>您将代表<br /><span>{{selectedSchool?selectedSchool.team_name:''}}</span><br />参与高校争霸赛</h4>
                    <div class="btns">
-                       <div class="btn rechoose">重新选择</div>
+                       <div class="btn rechoose" @click="closePopBox">重新选择</div>
                        <div class="btn confirm">确认</div>
                    </div>
                     <p class="tip">*温馨提示：学校信息一经确认，不可修改</p>
@@ -25,26 +31,51 @@
 </template>
 
 <script>
+    import {getSchoolList} from '../../api/school'
+    import Vue from 'vue';
+    import { IndexBar, IndexAnchor,Cell} from 'vant';
+    Vue.use(IndexBar).use(IndexAnchor).use(Cell);
     export default {
         name: "school",
         data(){
             return {
+                schools:null,
+                selectedSchool:null,
                 popBox:{
-                    show:true
+                    show:false
                 }
             }
         },
+        beforeMount(){
+            this.getSchool();
+        },
         methods:{
+            showPopBox(){
+                this.popBox.show=true;
+            },
             closePopBox(){
                 this.popBox.show=false;
+            },
+            getSchool(){
+                getSchoolList().then(res=>{
+                    console.log('getSchool',res);
+                    this.schools=res.data;
+                })
+            },
+            handleClick(item){
+                this.selectedSchool=item;
+                this.showPopBox();
             }
         },
 
     }
 </script>
 
-<style scoped lang="less">
+<style  lang="less">
     @import "../../style/popbox";
+    .van-index-anchor{
+        background:#F0F3F6 !important;
+    }
    .school-list{
        padding-bottom:40px;
        .alp-part{

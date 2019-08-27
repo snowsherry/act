@@ -4,43 +4,82 @@
             <div class="all-coin">
                 <p class="s-title">当前金币</p>
                 <div class="money-amount m-draw">
-                    <span>30000</span>
-                    <span class="rmb">约3.00元</span>
+                    <span>{{coin}}</span>
+                    <span class="rmb">约{{coin | ExchangeToMoney(rate)}}元</span>
                 </div>
             </div>
             <div class="history-btn" @click="goDrawHistory">历史记录</div>
         </div>
-        <div class="box wechat-name">提现微信账号：微信名</div>
+        <div class="box wechat-name">提现微信账号：{{weChatName?weChatName:'虎博用户'}}</div>
         <div class="box draw-box">
             <h2>提现金额</h2>
             <div class="draw-list">
-                <div class="draw-item" v-for=" i in 5">
-                    <div class="yuan">5元</div>
-                    <div class="coin">消耗：50000金币</div>
-                    <div class="tag" v-if="i==1">秒到账</div>
+                <div class="draw-item" v-for="(money,k) in availableDrawAmount" :class="[{'selected':money==cur}]" @click="chooseItem(money)">
+                    <div class="yuan">{{money}}元</div>
+                    <div class="coin">消耗：{{money*rate}}金币</div>
+                    <div class="tag" v-if="k==0">秒到账</div>
                 </div>
             </div>
             <div class="tip">
-                邀请<span>1</span>个好友即可获得<span>7000</span>积分，并获得一次<span>5</span>元秒到账 <br />提现机会
+                邀请<span>1</span>个好友即可获得<span>7000</span>积分，并获得一次<span>{{availableDrawAmount[0]}}</span>元秒到账 <br />提现机会
             </div>
         </div>
         <div class="rule">提现规则：单人每个月提现最多300元。本活动为财神股票用户提供的专享福利，任何利用活动非法盈利的用户，财神股票有最权拒绝提现。</div>
         <div class="draw-part">
-            <Cbutton :size="'large'" :txt="'立即提现'"  ></Cbutton>
+            <Cbutton :size="'large'" :txt="'立即提现'"  :click-event="draw"></Cbutton>
         </div>
     </div>
 </template>
 
 <script>
+    import {mapState,mapGetters,mapMutations} from 'vuex'
+    import {Withdraw} from "../../api/coin";
     import Cbutton from '../../components/button'
+    import Vue from 'vue';
+    import { Toast } from 'vant';
+    Vue.use(Toast);
     export default {
         name: "draw",
         components:{
             Cbutton
         },
+        data(){
+            return {
+                cur:null,
+                availableDrawAmount:[5,20,50,100],
+            }
+        },
+        computed:{
+            ...mapState('user',{
+                rate:"rate"
+            }),
+            ...mapGetters('user',{
+                coin:"getCoin",
+                weChatName:'getWeChatName'
+            })
+        },
         methods:{
+            chooseItem(moneny){
+                this.cur=this.cur==moneny?null:moneny;
+            },
             goDrawHistory(){
                 this.$router.push('/draw-history');
+            },
+            draw(){
+                if(this.cur==null){
+                    Toast.fail('请先选择提现金额！');
+                    return;
+                }
+                let coin=this.rate*this.cur;
+                if(coin>this.coin){
+                    Toast.fail('金币不足！');
+                    return;
+                }
+                Withdraw({
+                    coin:coin
+                }).then(res=>{
+                    console.log('Withdraw',res)
+                })
             }
         }
     }
@@ -121,6 +160,14 @@
                     color:rgba(119,119,119,1);
                     line-height:12px;
                     text-align: center;
+                }
+                &.selected{
+                    background: url('../../assets/image/icon-money-choosed.png') no-repeat;
+                    background-size:23px 20px;
+                    border: 1px solid #FFA500;
+                    .yuan,.coin{
+                        color: #FFA500;
+                    }
                 }
                 .tag{
                     width:44px;

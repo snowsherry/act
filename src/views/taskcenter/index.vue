@@ -5,21 +5,21 @@
                 <p class="mine">我的金币</p>
                 <div class="money">
                     <div class="money-amount">
-                        30000
-                       <span class="rmb">约3.00元</span>
+                        {{coin}}
+                       <span class="rmb">约{{coin | ExchangeToMoney(rate)}}元</span>
                     </div>
-                    <div class="draw-btn">提现兑换</div>
+                    <div class="draw-btn" @click="goDraw">提现兑换</div>
                 </div>
             </div>
-            <sign-in class="sign-in"></sign-in>
+            <sign-in-item class="sign-in"></sign-in-item>
             <div class="head-bottom">
-                <div class="tip">当前汇率：10000金币=1元</div>
+                <div class="tip">当前汇率：{{rate}}金币=1元</div>
             </div>
         </div>
         <div class="daily-task box">
             <div class="box-title">
                 <img src="../../assets/image/icon-tick.png" width="16" height="16">
-                <span>每日任务</span>
+                <span>任务列表</span>
             </div>
             <div class="task-list">
                 <task-item v-for="item in taskInfo" :key="item.title"
@@ -47,15 +47,32 @@
 </template>
 
 <script>
-    import signIn from '../../components/sign-in'
+    import {mapState,mapGetters,mapMutations} from 'vuex'
+    import signInItem from '../../components/sign-in'
     import taskItem from '../../components/task-item'
     import coinItem from '../../components/coin-history-item'
+    import {SignIn,GetMissionOverview} from '../../api/mission'
+    import {GetCoinHistory} from '../../api/coin'
     export default {
         name: "index",
         components:{
-            signIn,
+            signInItem,
             taskItem,
             coinItem
+        },
+        computed:{
+            ...mapState('user',{
+                rate:"rate"
+            }),
+            ...mapGetters('user',{
+                coin:"getCoin"
+            })
+        },
+        beforeMount(){
+            GetMissionOverview().then(res=>{
+                console.log('GetMissionOverview',res);
+            })
+            this.getCoinHistory();
         },
         data() {
             return{
@@ -81,13 +98,29 @@
                 ],
                 coinItem:{
 
-                }
+                },
+                coinHistory:[],
             }
         },
         methods:{
             goCoinHistory(){
                 this.$router.push('/coin-history');
                 return;
+            },
+            goDraw(){
+                this.$router.push('/draw');
+                return;
+            },
+            getCoinHistory(){
+                GetCoinHistory({
+                    pageIndex:1,
+                    pageSize:5
+                }).then(res=>{
+                    console.log('coin history',res)
+                    if(res.data.code==0){
+                        this.coinHistory=res.data.data.items;
+                    }
+                })
             }
         }
     }

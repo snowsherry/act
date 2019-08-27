@@ -1,62 +1,44 @@
-let baseUrl=process.env.NODE_ENV='production'?'http://10.0.5.35:8080/api/Mission/':'/Mission';
 import  axios from 'axios'
-let auth='';
+import  {baseUrlMission,AxiosRequst} from './base-coin-mission'
 export  const SignIn=()=>{
-  return  axios.request({
-      method:"GET",
-      url:baseUrl+'/SignIn',
-      headers: {
-          Authorization: "Bearer " + auth
-      },
-      params:{
-
-      },
-      data:{
-
-      }
+  return  AxiosRequst({
+      url:baseUrlMission+'/SignIn',
   })
 }
 
 export  const GetSignInfo=()=>{
-    return  axios.request({
-        method:"POST",
-        headers:{
-
-        },
-        params:{
-
-        },
-        data:{
-
-        }
+    return  AxiosRequst({
+        url:baseUrlMission+'/GetSignInfo',
     })
 }
 export  const ShareWechat=()=>{
-    return  axios.request({
-        method:"POST",
-        headers:{
-
-        },
-        params:{
-
-        },
-        data:{
-
-        }
+    return  AxiosRequst({
+        url:baseUrlMission+'/ShareWechat',
     })
 }
 
 export  const GenerateInviteCode=()=>{
-    return  axios.request({
-        method:"POST",
-        headers:{
+    return  AxiosRequst({
+        url:baseUrlMission+'/GenerateInviteCode',
+    })
+}
+export  const GetMissionOverview=()=>{
+    return  AxiosRequst({
+        url:baseUrlMission+'/GetMissionOverview',
+    })
+}
 
-        },
-        params:{
+export  const GetInviteList=()=>{
+    return  AxiosRequst({
+        url:baseUrlMission+'/GetInviteList',
+    })
+}
 
-        },
-        data:{
 
-        }
+export const InviteByWechat=(data)=>{
+    return axios.request({
+        method:'post',
+        url:baseUrlMission+'/InviteByWechat',
+        data:data
     })
 }
