@@ -1,12 +1,12 @@
 <template>
     <div class="coin-history-item">
         <div class="coin-history-item-left">
-            <p class="task-type">签到任务</p>
-            <p class="date">2019-08-12 17:13</p>
+            <p class="task-type">{{item.desc}}</p>
+            <p class="date">{{item.createTime}}</p>
         </div>
         <div class="coin-history-item-right">
             <img src="../../assets/image/icon-coin-s.png" width="20" height="20">
-            <span class="amount">+100</span>
+            <span class="amount">{{item.coin}}</span>
         </div>
     </div>
 </template>
@@ -15,7 +15,10 @@
     export default {
         name: "index",
         props:{
-
+            item:{
+                type:Object,
+                default:{}
+            }
         }
     }
 </script>

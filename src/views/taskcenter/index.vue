@@ -40,9 +40,10 @@
                 <div class="all" @click="goCoinHistory">全部</div>
             </div>
             <div class="coin-list">
-                <coin-item :item="coinItem" v-for="i in 5"></coin-item>
+                <coin-item :item="coinItem" v-for="coinItem in coinHistory"></coin-item>
             </div>
         </div>
+        <post ref="post"></post>
     </div>
 </template>
 
@@ -53,12 +54,14 @@
     import coinItem from '../../components/coin-history-item'
     import {SignIn,GetMissionOverview} from '../../api/mission'
     import {GetCoinHistory} from '../../api/coin'
+    import post from '../../components/post'
     export default {
         name: "index",
         components:{
             signInItem,
             taskItem,
-            coinItem
+            coinItem,
+            post
         },
         computed:{
             ...mapState('user',{
@@ -105,11 +108,11 @@
                         txt:'立即邀请'
                     }
                 ],
-                coinItem:{
-
-                },
                 coinHistory:[],
             }
+        },
+        mounted(){
+          this.setPost();
         },
         methods:{
             GetMissionOverview(){
@@ -140,7 +143,7 @@
             },
             getCoinHistory(){
                 GetCoinHistory({
-                    pageIndex:1,
+                    pageIndex:0,
                     pageSize:5
                 }).then(res=>{
                     console.log('coin history',res)
@@ -151,6 +154,9 @@
             },
             handleTaskClick(k){
                 console.log('k',k)
+            },
+            setPost(){
+                this.$refs.post.setImg();
             }
         }
     }
