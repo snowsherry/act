@@ -112,7 +112,7 @@
             }
         },
         mounted(){
-          this.setPost();
+         this.setPost();
         },
         methods:{
             GetMissionOverview(){

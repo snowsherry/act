@@ -28,26 +28,32 @@
                 imgData:null,
                 slogans:['排雷/诊股/选股','港/美/A实时行情','最新财报解读'],
                 fade:true,
-                show:true,
+                show:false,
             }
         },
         mounted(){
         },
         methods:{
             setImg(){
-                console.log('5666')
+                this.show=true;
+                console.log('5666');
                 let options={
                     scale:1
                 };
                 let that=this;
-                html2canvas(document.getElementById('post1'),options).then(function(canvas) {
-                    console.log('data url',canvas.toDataURL('image/png'))
-                    that.imgData=canvas.toDataURL('image/png');
-                    that.show=false;
-                    //that.fade=false;
-                   /* //that.drawed=true;
-                    //window.open(canvas.toDataURL('image/png'))*/
-                });
+                this.$nextTick(()=>{
+
+                    console.log('gggg')
+                    html2canvas(document.getElementById('post1'),options).then(function(canvas) {
+                        console.log('data url',canvas.toDataURL('image/png'))
+                        that.imgData=canvas.toDataURL('image/png');
+                        that.show=false;
+                        //that.fade=false;
+                        /* //that.drawed=true;
+                         //window.open(canvas.toDataURL('image/png'))*/
+                    });
+                })
+
             }
         }
     }
