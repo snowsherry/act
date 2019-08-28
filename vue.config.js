@@ -27,6 +27,14 @@ module.exports={
             '/getSchoolList':{
                 target: "http://10.0.17.66/api/",
                 changeOrigin: true,
+            },
+            '/account':{
+                target: "https://account.aigauss.com/api/",
+                changeOrigin: true,
+                pathRewrite:{
+                    "^/account":"/"
+                }
+
             }
         }
     }

@@ -11,7 +11,7 @@
                         <div class="draw-item-left">
                             <h2>微信提现（{{item.wechatName}}）</h2>
                             <P class="date">申请时间：{{item.createTime}}</P>
-                            <p class="wechat">提现微信号：{{weChatName}}</p>
+                            <p class="wechat">提现微信号：{{userInfo.wechatUserName}}</p>
                         </div>
                         <div class="draw-item-right">
                             <div class="status" v-if="item.auditingStatus===0">处理中</div>
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
+    import {mapState,mapGetters} from 'vuex'
     import emptyRecord from '../../components/empty-record'
     import {GetWithdrawHistory} from '../../api/coin'
     import Vue from 'vue';
@@ -61,8 +61,8 @@
             }
         },
         computed:{
-          ...mapState('user',{
-              weChatName:'weChatName'
+          ...mapGetters('user',{
+              userInfo:"getUserInfo"
           }),
             finished(){
               return this.pageIndex>=this.pages;

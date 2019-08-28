@@ -42,3 +42,19 @@ export const InviteByWechat=(data)=>{
         data:data
     })
 }
+
+export  const BindMobile=(data,token)=>{
+    return new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+            resolve(6666);
+        },2000)
+    })
+    return axios.request({
+        method:'post',
+        headers: {
+            Authorization: "Bearer " + token
+        },
+        url:baseUrlMission+'/BindMobile',
+        data:data
+    })
+}

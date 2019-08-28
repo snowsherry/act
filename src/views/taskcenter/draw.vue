@@ -10,7 +10,7 @@
             </div>
             <div class="history-btn" @click="goDrawHistory">历史记录</div>
         </div>
-        <div class="box wechat-name">提现微信账号：{{weChatName?weChatName:'虎博用户'}}</div>
+        <div class="box wechat-name">提现微信账号：{{userInfo?userInfo.wechatUserName:'虎博用户'}}</div>
         <div class="box draw-box">
             <h2>提现金额</h2>
             <div class="draw-list">
@@ -57,7 +57,7 @@
             }),
             ...mapGetters('user',{
                 coin:"getCoin",
-                weChatName:'getWeChatName'
+                userInfo:'getUserInfo'
             })
         },
         methods:{

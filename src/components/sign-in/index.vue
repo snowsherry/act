@@ -20,7 +20,9 @@
 
 <script>
     import {SignIn,GetSignInfo} from "../../api/mission";
-
+    import Vue from 'vue';
+    import { Toast } from 'vant';
+    Vue.use(Toast);
     export default {
         name: "index",
         data(){
@@ -48,6 +50,8 @@
                         //签到成功
                         this.signed=true;
                         this.days=this.days+1;
+                        Toast.success('签到成功');
+
                     }
                     }).catch(e=>{
                         console.error(e)

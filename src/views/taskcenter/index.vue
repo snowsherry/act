@@ -52,7 +52,7 @@
     import signInItem from '../../components/sign-in'
     import taskItem from '../../components/task-item'
     import coinItem from '../../components/coin-history-item'
-    import {SignIn,GetMissionOverview} from '../../api/mission'
+    import {GetMissionOverview} from '../../api/mission'
     import {GetCoinHistory} from '../../api/coin'
     import post from '../../components/post'
     export default {
@@ -68,7 +68,8 @@
                 rate:"rate"
             }),
             ...mapGetters('user',{
-                coin:"getCoin"
+                coin:"getCoin",
+                useInfo:'getUserInfo'
             })
         },
         beforeMount(){
@@ -85,7 +86,7 @@
                         tip:"通过具有分享页卡到朋友圈，增加积分",
                         type:"coin",
                         amount:500,
-                        times:[1,3],
+                        times:[0,3],
                         hasFinish: false,
                         txt:'立即领取'
                     },
@@ -94,7 +95,7 @@
                         tip:"参与猜涨跌游戏，至少猜测一支股票",
                         type:"coin",
                         amount:500,
-                        times:[1,3],
+                        times:[0,1],
                         hasFinish: false,
                         txt:'立即领取'
                     },
