@@ -16,10 +16,10 @@ export default new Router({
       name: 'home',
       component: taskcenter
     },
-    ...routeTaskCenter,
+      ...routeTaskCenter,
       ...routeNew,
-      ...routeBet,
       ...routeChallenge,
+      ...routeBet,
     {
       path: '*',
       redirect:"/"

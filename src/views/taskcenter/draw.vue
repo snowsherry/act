@@ -38,6 +38,8 @@
     import Cbutton from '../../components/button'
     import Vue from 'vue';
     import { Toast } from 'vant';
+    import {str_pad_let} from '../../utils'
+    import moment from 'moment'
     Vue.use(Toast);
     export default {
         name: "draw",
@@ -87,8 +89,14 @@
                 }).then(res=>{
                     this.isDrawing=false;
                   if(res.data.code===0){
-                      Toast.success('已成功申请');
+                      //Toast.success('已成功申请');
                       this.addCoin(-coin);
+                      //
+                      let date=moment().format("hh:mm");
+                      this.$router.push({path:'/draw-detail',query:{
+                          money:this.cur,
+                              date:date
+                          }})
                   }else{
                       Toast.fail(res.data.message);
                   }

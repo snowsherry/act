@@ -17,8 +17,8 @@
         </div>
         <div class="rules">
             <div class="title"><span>大赛流程</span></div>
-            <div class="content">
-               <P>{{rule['rules']}}</P>
+            <div class="content" v-html="rule['rules']">
+
             </div>
         </div>
         <div class="popbg" v-show="popBox.show">
@@ -58,7 +58,7 @@
             return{
                 signed:false,
                 popBox:{
-                    show:true,
+                    show:false,
                     mobile:{
                         show:false,
                     },
@@ -69,7 +69,7 @@
                         show:false,
                     },
                     guesseResult:{
-                        show:true,
+                        show:false,
                     }
 
                 },

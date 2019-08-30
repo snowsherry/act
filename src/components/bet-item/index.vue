@@ -1,29 +1,31 @@
 <template>
     <div class="bet-item">
         <div class="stock-info">
-            <div class="avatar"></div>
+            <div class="avatar"><img :src="item.logoImgUrl" v-if="item.logoImgUrl" width="48" height="48"></div>
             <div class="code">
-                <h3>波司登</h3>
-                <h5>03998.HK</h5>
+                <h3>{{item.name}}</h3>
+                <h5>{{item.symbol}}</h5>
             </div>
-            <div class="tag">服饰</div>
+            <div class="tag" v-if="item.labels">{{item.labels}}</div>
         </div>
-        <h4>描述标题描述标题描述标题</h4>
+        <h4>{{item.title}}</h4>
         <p class="desc">
-            描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情描述详情
+            {{item.content}}
         </p>
         <div class="price">
             <span>最新价</span>
-            <span class="price-item bad">18.24   -68.23%</span>
+            <span class="price-item" :class="item.quotation.change>=0?'good':'bad'" v-if="item.quotation">{{item.quotation.close}}   {{item.quotation.change>0?`+${item.quotation.changePercent}`:item.quotation.changePercent}}%</span>
             <div class="detail">个股详情 <img src="../../assets/image/bet/icon-arrow-to.png" width="6"> </div>
         </div>
-        <div class="k-line"></div>
-        <div class="select-area" v-if="!betted">
-            <bet-btn :percentage="40" :type="'raise'" :click-event="doBet"></bet-btn>
-            <bet-btn :percentage="60" :type="'fall'"  :click-event="doBet"></bet-btn>
+        <div class="k-line">
+            <img :src="item.kline" width="300" v-if="item.kline">
+        </div>
+        <div class="select-area" v-if="item.voteInfo==null">
+            <bet-btn :percentage="item.rate[0]" :type="'raise'" :click-event="doBet"></bet-btn>
+            <bet-btn :percentage="item.rate[1]" :type="'fall'"  :click-event="doBet"></bet-btn>
         </div>
         <div  v-else>
-            <rate-bar :rates="[100,0]"></rate-bar>
+            <rate-bar :rates='item.rate'></rate-bar>
             <div class="selected">
                 您已选择看<span :class="trend">{{trend=='raise'?'涨':'跌'}}</span>
             </div>
@@ -41,17 +43,27 @@
             betBtn,
             rateBar,
         },
+        props:{
+            item:{
+                type:Object
+            }
+        },
         data(){
             return {
                     betted:false,
-                    trend:""
+            }
+        },
+        computed:{
+            trend(){
+                return this.item.voteInfo==null?'':this.item.voteInfo.side=='Long'?'raise':'fall';
             }
         },
         methods:{
             doBet(aim){
                 console.log('aim',aim)
-                this.betted=true;
-                this.trend=aim;
+                this.$emit('popBet',aim,this.item.symbol);
+                //this.betted=true;
+               //this.trend=aim;
             }
         }
     }
@@ -70,6 +82,9 @@
                 height: 48px;
                 background: #D8D8D8;
                 margin-right:8px;
+                img{
+
+                }
             }
             .code{
                     h3{
@@ -105,6 +120,9 @@
             font-weight:500;
             color:rgba(58,62,66,1);
             margin:18px 0  6px;
+            text-overflow:ellipsis;
+            overflow:hidden;
+            white-space:nowrap;
         }
         .price{
             margin: 12px 0;
@@ -117,7 +135,7 @@
                 margin-left: 10px;
             }
             .good{
-
+                color: #FB4148;
             }
             .bad{
                 color:rgba(24,171,85,1);
@@ -147,11 +165,11 @@
         }
         .k-line{
             width: 300px;
-            height: 90px;
-            margin: 0 auto 20px;
+            height: 100px;
+            margin: 0 auto 10px;
         }
         .select-area{
-            margin: 15px auto;
+            margin: 10px auto 15px;
             display: flex;
             justify-content: space-between;
         }

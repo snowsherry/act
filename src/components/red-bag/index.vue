@@ -111,7 +111,7 @@
             box-sizing: border-box;
             text-align: center;
             padding:30px 0  0 ;
-            background: rgba(255,255,255,0.2);
+            //background: rgba(255,255,255,0.2);
             p{
                 font-size:14px;
                 font-family:STYuanti-SC;

@@ -3,9 +3,9 @@
         <div class="header">
             <div class="top">
                 <div class="top-left">
-                    <div class="avatar"></div>
+                    <div class="avatar"><img :src="userInfo.avatar"  width="48" height="48"></div>
                     <div class="info">
-                        <h4>自由自在的猪</h4>
+                        <h4>{{userInfo.wechatUserName}}</h4>
                         <h5>历史最佳排名 23</h5>
                     </div>
                 </div>
@@ -21,7 +21,7 @@
                 </div>
                 <div class="summary-item">
                     <h4><img src="../../assets/image/star-big.png">11</h4>
-                    <h5>当日机会</h5>
+                    <h5>已获得（本赛季）</h5>
                 </div>
                 <div class="summary-item">
                     <h4>46%</h4>
@@ -68,6 +68,11 @@
     import  {SET_NAV} from '../../store/bet'
     export default {
         name: "mine",
+        computed:{
+            ...mapGetters('user',{
+                userInfo:'getUserInfo',
+            })
+        },
         methods:{
             ...mapMutations('bet',{
                 setNav:SET_NAV
@@ -76,6 +81,7 @@
 
             }
         },
+
         beforeMount(){
             this.setNav('mine');
         }
@@ -108,6 +114,7 @@
                         margin-right: 10px;
                         background: #ffffff;
                         border-radius: 100%;
+                        overflow: hidden;
                     }
                     .info{
                             height: 48px;
@@ -301,11 +308,11 @@
                         }
                         .s2{
                             width: @s2;
-                            font-size:14px;
+                            font-size:13px;
                             font-family:PingFangSC;
                             font-weight:400;
                             color:rgba(94,101,108,1);
-                            line-height:14px;
+                            line-height:13px;
                         }
                         .s3{
                             width: @s3;
@@ -322,11 +329,11 @@
                         .s4{
                             flex: 1 1 auto;
                             text-align: right;
-                            font-size:14px;
+                            font-size:13px;
                             font-family:PingFangSC;
                             font-weight:400;
                             color:rgba(94,101,108,1);
-                            line-height:14px;
+                            line-height:13px;
                             &.success{
                                 color:rgba(255,165,0,1);
                             }

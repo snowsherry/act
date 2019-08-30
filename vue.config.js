@@ -35,6 +35,13 @@ module.exports={
                     "^/account":"/"
                 }
 
+            },
+            '/bets': {
+                target: "http://10.0.2.98:8083/",
+                changeOrigin: true,
+                pathRewrite: {
+                    "^/bets": "/"
+                }
             }
         }
     }

@@ -53,7 +53,7 @@
         name: "index",
         data(){
             return {
-                authored:true,//授权
+                authored:false,//授权
                 binded:false,//绑定号码
                 opened:false,
                 code:"",
@@ -90,8 +90,8 @@
         },
         methods:{
             goOpen(){
-                this.authored=true;
-                return;
+                /*this.authored=true;
+                return;*/
                 if(this.code){//已经登陆有code了
                     //开启红包 带上用户的信息
 
@@ -198,7 +198,7 @@
         min-height: 100vh;
         box-sizing: border-box;
         padding-top: 312px;
-        background: url('../../assets/image/new/red-bag-bg.png') no-repeat;
+        background: url('../../assets/image/new/red-bag-bg.png') center 28px no-repeat ;
         background-size: 100% auto;
         //background-color:#BD2736;
         position: relative;
