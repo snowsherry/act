@@ -21,7 +21,7 @@
                     <h4>您将代表<br /><span>{{selectedSchool?selectedSchool.team_name:''}}</span><br />参与高校争霸赛</h4>
                    <div class="btns">
                        <div class="btn rechoose" @click="closePopBox">重新选择</div>
-                       <div class="btn confirm">确认</div>
+                       <div class="btn confirm" @click="chooseSchool">确认</div>
                    </div>
                     <p class="tip">*温馨提示：学校信息一经确认，不可修改</p>
                 </div>
@@ -31,10 +31,10 @@
 </template>
 
 <script>
-    import {getSchoolList} from '../../api/school'
+    import {getSchoolList,addTeam} from '../../api/school'
     import Vue from 'vue';
-    import { IndexBar, IndexAnchor,Cell} from 'vant';
-    Vue.use(IndexBar).use(IndexAnchor).use(Cell);
+    import { IndexBar, IndexAnchor,Cell,Toast} from 'vant';
+    Vue.use(IndexBar).use(IndexAnchor).use(Cell).use(Toast);
     export default {
         name: "school",
         data(){
@@ -65,6 +65,28 @@
             handleClick(item){
                 this.selectedSchool=item;
                 this.showPopBox();
+            },
+            chooseSchool(){
+                addTeam({
+                    season_id:1,
+                    team_id:this.selectedSchool.id,
+                }).then(res=>{
+                   if(res.data.error==0){//
+                       Toast.success({
+                           duration:1000,
+                           message:"已成功加入战队",
+                       })
+                       this.closePopBox();
+                       setTimeout(()=>{
+                           this.$router.push('/challenge');
+                       },1000)
+                   }else{
+                       Toast.fail({
+                           duration:2000,
+                           message:res.data.message,
+                       })
+                   }
+                })
             }
         },
 

@@ -5,3 +5,8 @@ export const str_pad_let=(str,amount,padding)=>{
     return paddingLeft+str;
 
 }
+export  const isWeiXin=()=>{
+    let  userAgent = navigator.userAgent.toLowerCase();
+    console.log('userAgent',userAgent)
+    return userAgent.match(/MicroMessenger/i)=="micromessenger"?true:false;
+}

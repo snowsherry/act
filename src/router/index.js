@@ -20,9 +20,9 @@ export default new Router({
       ...routeNew,
       ...routeChallenge,
       ...routeBet,
-    {
+    /*{
       path: '*',
       redirect:"/"
-    },
+    },*/
   ]
 })

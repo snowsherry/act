@@ -119,7 +119,9 @@
                 this.closePopBox();
             },
             getRule(){
-                getSeasonDetail({id:1}).then(res=>{
+                getSeasonDetail({
+                    isSign:true
+                }).then(res=>{
                     console.log('getSeasonDetail',res);
                     if(res.data.code==0){
                         this.rule=res.data.data;

@@ -1,6 +1,6 @@
 <template>
     <div class="rank">
-        <van-tabs v-model="active" :line-width="40" :line-height="2" :color="'#1374E5'">
+        <van-tabs v-model="active" :line-width="40" :line-height="2" :color="'#1374E5'" swipeable animated>
             <van-tab title="个人排行榜">
                 <div class="rank-part personal">
                     <Card class="card" :type="'personal'"></Card>

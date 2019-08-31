@@ -1,5 +1,5 @@
 import  axios from 'axios'
-import {baseUrlStock,AxiosRequst} from './base-coin-mission'
+import {baseUrlStock,AxiosRequst} from './base'
 export  const getStockTargets=()=>{// 获取待猜股票
     return AxiosRequst({
         method:"get",

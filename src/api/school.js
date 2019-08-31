@@ -1,10 +1,18 @@
 import axios from 'axios';
-let baseUrl=process.env.NODE_ENV!=='development'?'http://10.0.17.66/api/getSchoolList':'/getSchoolList';
+import {AxiosRequst} from './base'
+let baseUrl=process.env.NODE_ENV!=='development'?'http://10.0.17.66/api':'/SchoolApi';
 
 export const getSchoolList=(params)=>{
     return  axios.request({
         method:"get",
-        url:baseUrl,
+        url:baseUrl+'/getSchoolList',
         params:params
+    })
+}
+export  const addTeam=(data)=>{
+    return AxiosRequst({
+        method:'post',
+        url:baseUrl+'/addTeam',
+        data:data
     })
 }
