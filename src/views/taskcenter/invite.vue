@@ -4,35 +4,35 @@
             <div class="total-get">
                 <p class="s-title">累计获得</p>
                 <div class="money-amount m-invite">
-                    <span>30000</span>
-                    <span class="rmb">约3.00元</span>
+                    <span>{{totalCoin}}</span>
+                    <span class="rmb">约{{totalCoin  | ExchangeToMoney(rate)}}元</span>
                 </div>
             </div>
             <div class="will-get">
                 <div class="will-get-left">
                     <p class="s-title">即将获得金币</p>
                     <div class="money-amount m-invite">
-                        <span>30000</span>
-                        <span class="rmb">约3.00元</span>
+                        <span>{{couldGetCoin}}</span>
+                        <span class="rmb">约{{couldGetCoin |  ExchangeToMoney(rate)}}元</span>
                     </div>
                 </div>
                 <div class="total">
                     <div class="line"></div>
                     <div class="person">
                         <p class="s-title">总邀请人数</p>
-                        <p class="renshu"><span>30</span>人</p>
+                        <p class="renshu"><span>{{invitePerson}}</span>人</p>
                     </div>
                 </div>
             </div>
         </div>
         <div class="seperate-line"></div>
         <div class="box invite-list">
-            <div class="user-item" v-for="i in 3">
+            <div class="user-item" v-for="item  in invitePersonList">
                 <div class="user-item-left">
-                    <div class="avatar"></div>
+                    <div class="avatar"><img :src="item.userAvtar" width="40" height="40"></div>
                     <div class="user-info">
-                        <p class="nickname">用户昵称最长用户昵称最长用户昵称最长</p>
-                        <p class="info">纯纯粹参与猜涨跌后你可再获得<span>3</span>元</p>
+                        <p class="nickname">{{item.userName}}</p>
+                        <p class="info">{{item.userName}}参与猜涨跌后你可再获得<span>3</span>元</p>
                     </div>
                 </div>
                 <div class="user-item-right">
@@ -45,8 +45,39 @@
 </template>
 
 <script>
+    import {GetInviteList} from '../../api/mission'
+    import {mapGetters,mapState} from 'vuex'
     export default {
-        name: "draw"
+        name: "draw",
+        data(){
+            return {
+                couldGetCoin:0,
+                invitePerson:0,
+                invitePersonList:[],
+                totalCoin:0,
+            }
+        },
+        beforeMount(){
+            this.GetInviteList();
+        },
+        computed:{
+            ...mapState('user',{
+                rate:"rate"
+            }),
+        },
+        methods:{
+            GetInviteList(){
+                GetInviteList().then(res=>{
+                    if(res.data.code==0){
+                        let data=res.data.data;
+                        this.couldGetCoin=data.couldGetCoin;
+                        this.invitePerson=data.invitePerson;
+                        this.invitePersonList=data.invitePersonList;
+                        this.totalCoin=data.totalCoin;
+                    }
+                })
+            }
+        }
     }
 </script>
 

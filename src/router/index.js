@@ -5,6 +5,7 @@ import routeTaskCenter from './taskCenter'
 import routeNew from './new'
 import routeBet from './bet'
 import routeChallenge from './challenge'
+import routePop from './pop'
 Vue.use(Router);
 
 export default new Router({
@@ -16,10 +17,16 @@ export default new Router({
       name: 'home',
       component: taskcenter
     },
+    {
+      path: '/dsbridge',
+      name: 'dsbridge',
+      component: ()=>import('@/views/dsbridge.vue')
+    },
       ...routeTaskCenter,
       ...routeNew,
       ...routeChallenge,
       ...routeBet,
+      ...routePop
     /*{
       path: '*',
       redirect:"/"

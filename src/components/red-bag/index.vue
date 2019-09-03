@@ -37,7 +37,7 @@
             </div>
             <div class="center">
                 <p>仅限新用户注册领取</p>
-                <div class="invite-btn amount">2.23元</div>
+                <div class="invite-btn amount">{{money}}元</div>
             </div>
             <div class="bottom">
                 <div class="go-btn">立即查看</div>
@@ -55,6 +55,10 @@
             type:{
                 type:String,
                 default:'',
+            },
+            money:{
+                type:String,
+                default:'0.00',
             },
             closeEvent:{
                 type:Function

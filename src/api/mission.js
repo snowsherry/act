@@ -35,11 +35,11 @@ export  const GetInviteList=()=>{
 }
 
 
-export const InviteByWechat=(data)=>{
+export const InviteByWechat=(params)=>{
     return axios.request({
         method:'post',
         url:baseUrlMission+'/InviteByWechat',
-        data:data
+        params:params
     })
 }
 

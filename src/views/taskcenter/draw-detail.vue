@@ -27,7 +27,7 @@
                 <div class="triangle"></div>
                 <p>
                     <span class="p1">提现方式</span>
-                    <span class="p2">微信（用户昵称）</span>
+                    <span class="p2">微信（{{userInfo.wechatUserName}}）</span>
                 </p>
                 <p>
                     <span class="p1">提现金额</span>
@@ -48,11 +48,17 @@
 <script>
 
     import Cbutton from '../../components/button'
+    import {mapState,mapGetters} from 'vuex'
     import Vue from 'vue';
     export default {
         name: "draw-detail",
         components:{
             Cbutton
+        },
+        computed:{
+            ...mapGetters('user',{
+                userInfo:"getUserInfo"
+            }),
         },
         data(){
             return {

@@ -1,10 +1,10 @@
 <template>
-    <div class="task-center">
+    <div class="task-center" :class="[{'go-top':scrollTop}]">
         <div class="head box">
             <div class="head-top">
                 <p class="mine">我的金币</p>
                 <div class="money">
-                    <div class="money-amount">
+                    <div class="money-amount ding">
                         {{coin}}
                        <span class="rmb">约{{coin | ExchangeToMoney(rate)}}元</span>
                     </div>
@@ -110,10 +110,13 @@
                     }
                 ],
                 coinHistory:[],
+                scrollTop:false,
             }
         },
         mounted(){
-         this.setPost();
+        /* setTimeout(()=>{
+             this.setPost();
+         },5000)*/
         },
         methods:{
             GetMissionOverview(){
@@ -155,8 +158,17 @@
             },
             handleTaskClick(k){
                 console.log('k',k)
+                if(k==0){//分享朋友圈
+                    var that=this;
+                    window.scrollTo(0,0);
+                    setTimeout(()=>{
+                        this.setPost()
+                    },100)
+                    //this.setPost();
+                }
             },
             setPost(){
+                //SCROLL-TOP 0
                 this.$refs.post.setImg();
             }
         }

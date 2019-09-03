@@ -84,7 +84,7 @@
                     code:this.code,
                     inviteCode:this.inviteCode
                 }).then(res=>{
-                    console.log('res is',res);
+                    alert('res is',JSON.stringify(res));
                 })
             }
         },
@@ -197,7 +197,7 @@
         width: 100%;
         min-height: 100vh;
         box-sizing: border-box;
-        padding-top: 312px;
+        padding-top: 340px;
         background: url('../../assets/image/new/red-bag-bg.png') center 28px no-repeat ;
         background-size: 100% auto;
         //background-color:#BD2736;

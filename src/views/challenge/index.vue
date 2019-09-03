@@ -22,6 +22,29 @@
             </div>
         </div>
         <div class="popbg" v-show="popBox.show">
+            <div class="popbox-mobile" v-show="popBox.mobile.show">
+                <div class="content">
+                    <div class="close" @click="closePopBox"></div>
+                    <div class="sp phone">
+                        <input  type="text" placeholder="请输入手机号码" maxlength="11" v-model="phone"/>
+                    </div>
+                    <div class="sp verifyCode">
+                        <input  type="text" placeholder="请输入验证码" maxlength="6" v-model="verifyCode"/>
+                        <div class="get-verify-code">
+                            <span @click="getVerifyCode" v-show="!isCountDown">获取验证码</span>
+                            <van-count-down v-show="isCountDown"
+                                            :time="time"
+                                            format="ss 秒"
+                                            ref="countDown"
+                                            :auto-start="false" @finish="finished"
+
+                            />
+                        </div>
+                    </div>
+
+                    <Cbutton size="middle" type="red" txt="提交申请" class="big-btn sign-btn" :clickEvent="goUpdateMobile"></Cbutton>
+                </div>
+            </div>
             <div class="popbox-chance" v-show="popBox.school.show">
                 <div class="content">
                     <div class="close" @click="closePopBox"></div>
@@ -46,7 +69,15 @@
     import Count from '../../components/count'
     import {INIT_JOIN_INFO,SET_JOIN_INFO} from '../../store/school'
     import {getSeasonDetail} from '../../api/challenge'
+    import {InviteByWechat,BindMobile} from '../../api/mission'
+    import {SendConfirmationCode} from '../../api/account'
     import redBag from '../../components/red-bag'
+    import {getCurrentPage} from '../../utils'
+    import *  as tokenInWechat  from '../../localStorage/token'
+    import Vue from 'vue';
+    import { Toast,CountDown} from 'vant';
+
+    Vue.use(Toast).use(CountDown);
     export default {
         name: "index",
         components:{
@@ -74,6 +105,15 @@
 
                 },
                 rule:{},
+                token:tokenInWechat.get(),
+                code:"",
+                inviteCode:"",
+                phone:'',
+                verifyCode:'',
+                isUpdate:false,//是否正在提交
+                //倒计时
+                time:60*1000,
+                isCountDown:false,
             }
         },
         computed:{
@@ -93,6 +133,31 @@
            /* this.initJoinInfo();//异步的事件哇
             console.log('dddd',this.joinInfo);*/
             this.getRule();
+            //console.log('getCurrentPage',getCurrentPage())
+           /* let query=this.$route.query;
+            this.inviteCode=query.inviteCode;
+            if(query&&query.code){
+                this.code=query.code;
+                console.log('555')
+                //获取用户的信息
+                /!* getAccessToken(this.code).then(res=>{
+                     console.log('res',res);
+                 }).catch(e=>{
+                     console.error(e);
+                 });*!/
+                InviteByWechat({
+                    appId:'wxa0640e322b3416ee',
+                    code:this.code,
+                    inviteCode:this.inviteCode
+                }).then(res=>{
+                    console.log('res is',res);
+                })
+            }*/
+
+            if(this.token){
+                //判断是否已经输入手机 和是否已经报名
+            }
+            this.showPopBoxMobile();
         },
         methods:{
             ...mapMutations('school',{
@@ -102,7 +167,24 @@
                 initJoinInfo:INIT_JOIN_INFO
             }),
             signIn(){
-                this.signed=true;
+                //this.signed=true;
+
+            },
+            showPopBoxMobile(){
+                this.popBox.show=true;
+                this.popBox.mobile.show=true;
+            },
+            closePopBoxMobile(){
+                this.popBox.mobile.show=false;
+                this.closePopBox();
+            },
+            showPopBoxSchool(){
+                this.popBox.show=true;
+                this.popBox.school.show=true;
+            },
+            closePopBoxSchool(){
+                this.popBox.school.show=false;
+                this.closePopBox();
             },
             goSchool(){
                 this.$router.push('/challenge/school');
@@ -127,7 +209,91 @@
                         this.rule=res.data.data;
                     }
                 })
-            }
+            },
+            getVerifyCode(){
+                if(!this.checkPhone()) return;
+                SendConfirmationCode({
+                    mobile: `+86|${this.phone}`
+                }).then(res=>{
+                    if(res.data.code===0){
+                        Toast.success({
+                            duration:1000,
+                            message:"验证码已发送"
+                        })
+                    }else{
+                        Toast.fail({
+                            duration:1000,
+                            message:res.data.message
+                        })
+                    }
+
+
+                });
+                this.isCountDown=true;
+                this.$refs.countDown.start();
+            },
+            finished(){
+                this.$refs.countDown.reset();
+                this.isCountDown=false;
+            },
+            goUpdateMobile(){
+                if(!this.checkPhone()||!this.checkVerifyCode()) return;//验证
+                if(this.isUpdate) return;
+                this.isUpdate=true;
+                //接口提交
+                /*
+                * {
+                  "mobile" : "+86|15651803502",
+                  "confirmCode" : "0000",
+                  "token" : ""
+                }*/
+                let auth="";
+                Toast.loading({
+                    duration: 0,       // 持续展示 toast
+                    forbidClick: true, // 禁用背景点击
+                    loadingType: 'spinner',
+                    message: '正在绑定'
+                });
+                BindMobile({
+                    mobile:'+86|'+this.phone,
+                    confirmCode:this.verifyCode,
+                    token:""
+                },auth).then(res=>{
+                    this.isUpdate=false;
+                    Toast.success({
+                        duration:1000,
+                        message:"绑定成功"
+                    })
+                    this.binded=true;
+                    Toast.clear();
+                    this.closePopBoxMobile();
+                    this.showPopBoxSchool();
+                });
+
+
+            },
+            checkPhone(){
+                let regExp=/^1\d{10}$/;
+                if(!this.phone||!regExp.test(this.phone)){
+                    Toast.fail({
+                        message:"请输入正确的手机号码",
+                        duration:1000
+                    })
+                    return false;
+                }
+                return true;
+            },
+            checkVerifyCode(){
+                let regExp=/^\d{4,6}$/;
+                if(!this.verifyCode||!regExp.test(this.verifyCode)){
+                    Toast.fail({
+                        message:"请输入验证码",
+                        duration:1000
+                    })
+                    return false;
+                }
+                return true;
+            },
         }
     }
 </script>

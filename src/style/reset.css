@@ -41,3 +41,17 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+@font-face {
+    font-family: "din";
+    src:url('../assets/font/dinpro.ttf');
+}
+@font-face {
+    font-family: "PingFangSC";
+    src:url('../assets/font/PingFangRegular.ttf');
+}
+.ding{
+    font-family: din;
+}
+.pingFang{
+    font-family:'PingFangSC' ;
+}

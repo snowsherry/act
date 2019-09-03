@@ -1,0 +1,15 @@
+module.exports=[
+    {
+        path:"/pop",
+        name:'pop',
+        component:()=>import('@/views/pop/index'),
+        redirect:'/pop/new',
+        children:[
+            {
+                path:"new",
+                name:'popNew',
+                component:()=>import('@/views/pop/new')
+            },
+        ]
+    }
+]

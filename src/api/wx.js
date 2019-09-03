@@ -1,9 +1,9 @@
 import axios from 'axios'
 let baseUrl='/WX';
-export  const APPID='wxd11569992f19c317';
+export  const APPID='wx69ab2ec17a1ea685';
 export  const goWxAuthor=(url='',state='',hash='')=>{
     //url=encodeURIComponent(url);
-    let page=`https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd11569992f19c317&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=${state}#${hash}`;
+    let page=`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${encodeURIComponent(url)}&response_type=code&scope=snsapi_userinfo&state=${state}#${hash}`;
     window.location.href=page;
     return;
 }
