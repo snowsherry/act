@@ -11,7 +11,7 @@
                     <div class="draw-btn" @click="goDraw">提现兑换</div>
                 </div>
             </div>
-            <sign-in-item class="sign-in"></sign-in-item>
+            <sign-in-item class="sign-in" @signed="signed"></sign-in-item>
             <div class="head-bottom">
                 <div class="tip">当前汇率：{{rate}}金币=1元</div>
             </div>
@@ -44,6 +44,16 @@
             </div>
         </div>
         <post ref="post"></post>
+        <div class="popbg" v-show="popBox.show">
+            <div class="popbox-share" v-show="popBox.shareFriend.show">
+                <div class="content">
+                    <div class="close" @click="closePopBoxShare"></div>
+                    <h2>分享给好友</h2>
+                    <h4>您需要先选择一支股票，并分享至微信即可获得财币奖励</h4>
+                    <Cbutton size="middle" type="red" txt="去分享" class="big-btn sign-btn" :clickEvent="goIndex" style="margin: 20px 0 ;"></Cbutton>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -52,16 +62,18 @@
     import signInItem from '../../components/sign-in'
     import taskItem from '../../components/task-item'
     import coinItem from '../../components/coin-history-item'
-    import {GetMissionOverview} from '../../api/mission'
+    import {GetMissionOverview,ShareWechat} from '../../api/mission'
     import {GetCoinHistory} from '../../api/coin'
     import post from '../../components/post'
+    import Cbutton from '../../components/button'
     export default {
         name: "index",
         components:{
             signInItem,
             taskItem,
             coinItem,
-            post
+            post,
+            Cbutton
         },
         computed:{
             ...mapState('user',{
@@ -111,6 +123,13 @@
                 ],
                 coinHistory:[],
                 scrollTop:false,
+                popBox:{
+                    show:false,
+                    shareFriend:{
+                        show:false
+                    }
+
+                }
             }
         },
         mounted(){
@@ -119,6 +138,20 @@
          },5000)*/
         },
         methods:{
+            goIndex(){//跳到首页
+                
+            },
+            showPopBoxShare(){
+                this.popBox.show=true;
+                this.popBox.shareFriend.show=true;
+            },
+            closePopBoxShare(){
+                this.popBox.show=false;
+                this.popBox.shareFriend.show=false;
+            },
+            signed(){
+                this.getCoinHistory();
+            },
             GetMissionOverview(){
                 GetMissionOverview().then(res=>{
                     console.log('GetMissionOverview',res);
@@ -159,25 +192,31 @@
             handleTaskClick(k){
                 console.log('k',k)
                 if(k==0){//分享朋友圈
+                    //this.setPost();
+                    this.showPopBoxShare();
+                }else if(k==1){//去猜涨跌
+
+                }else if(k==2){//立即邀请
                     var that=this;
                     window.scrollTo(0,0);
                     setTimeout(()=>{
                         this.setPost()
                     },100)
-                    //this.setPost();
                 }
             },
             setPost(){
                 //SCROLL-TOP 0
-                this.$refs.post.setImg();
+                this.$refs.post.setImg2();
             }
         }
     }
 </script>
 
 <style scoped lang="less">
+    @import "../../style/popbox";
     .task-center{
         background:#F2F6F9 ;
+       // min-height: 100vh;
     }
     .blank-bg{
         background:#ffffff ;

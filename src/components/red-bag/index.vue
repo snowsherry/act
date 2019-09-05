@@ -40,7 +40,7 @@
                 <div class="invite-btn amount">{{money}}元</div>
             </div>
             <div class="bottom">
-                <div class="go-btn">立即查看</div>
+                <div class="go-btn" @click="goCenter">立即查看</div>
             </div>
         </div>
 
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+    import {popCloseSelf} from "../../dsbridge";
+
     export default {
         name: "red-bag",
         props:{
@@ -68,6 +70,12 @@
         methods:{
             handleCloseClick(){
                 this.closeEvent&&this.closeEvent();
+            },
+            goCenter(){
+                let url=process.env.VUE_APP_BASE_URL+'/campus';
+                // openUrl(url);
+                popCloseSelf({toUrl: url});
+
             }
         }
     }

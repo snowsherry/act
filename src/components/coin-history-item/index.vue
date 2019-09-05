@@ -6,7 +6,7 @@
         </div>
         <div class="coin-history-item-right">
             <img src="../../assets/image/icon-coin-s.png" width="20" height="20">
-            <span class="amount">{{item.coin}}</span>
+            <span class="amount">{{item.coin>0?`+${item.coin}`:item.coin}}</span>
         </div>
     </div>
 </template>

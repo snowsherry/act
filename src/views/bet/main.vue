@@ -1,14 +1,16 @@
 <template>
     <div class="main">
         <div class="head">
-            <Count :txt="'今日奖池-金币'" :count="10000"></Count>
+            <Count :txt="'今日奖池-金币'" :count="coinPool"></Count>
         </div>
-        <div class="stock-box">
+        <div class="stock-content">
+            <div class="stock-box">
             <van-swipe style="height: 468px; border-radius: 8px; overflow: hidden" vertical :show-indicators="false" @change="onChange">
                 <van-swipe-item v-for="stockitem  in stockList">
                     <bet-item :item="stockitem" @popBet="showPopBoxBet"></bet-item>
                 </van-swipe-item>
             </van-swipe>
+        </div>
         </div>
         <div class="popbg" v-show="popBox.show">
             <div class="popbox-bet" v-show="popBox.bet.show">
@@ -36,6 +38,7 @@
 </template>
 
 <script>
+    import {getTodayCoinPool} from '../../api/challenge'
     import {mapGetters,mapMutations,mapActions} from 'vuex'
     import {getStockTargets,getVoteRate,getCalcProfit,goVote,goTodayVoteRecord,getLeftChance} from '../../api/stock'
     import {getQuotation} from '../../api/hangqing'
@@ -54,6 +57,7 @@
                 stockList:[],
                 votedList:[],//已经投票过的列表
                 //votedListObj:null,
+                coinPool:0,
                 popBox:{
                     show:false,
                     bet:{
@@ -262,6 +266,11 @@
                     }
                 })
             },
+            getTodayCoinPool(){
+                getTodayCoinPool().then(res=>{
+                    this.coinPool=res.data.data;
+                })
+            },
             setInt(){
                 let num=0;
                 setInterval(()=>{
@@ -278,6 +287,7 @@
             this.goTodayVoteRecord();*/
             this.getStocksAndVotedInfo();
             this.getLeftChance();
+            this.getTodayCoinPool();
         }
     }
 </script>
@@ -297,8 +307,16 @@
             left: 0;
             top:0;
         }
+        .stock-content{
+            min-height: 100vh;
+            box-sizing: border-box;
+            padding: 60px 0  50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
         .stock-box{
-            width: 335px;margin:60px auto;
+            width: 335px;margin:0 auto;
             .van-swipe-item{
                 background:#ffffff ;
                 overflow: hidden;

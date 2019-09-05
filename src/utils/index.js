@@ -20,3 +20,7 @@ export const getCurrentPage=(hasQuery=true,hasHash=false)=>{
     return url;
 
 }
+export  const goDownload=()=>{
+    let url='https://sj.qq.com/myapp/detail.htm?apkName=com.tigerobo.exchange';
+    window.location.href=url;
+}

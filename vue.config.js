@@ -20,7 +20,7 @@ module.exports={
                 changeOrigin: true,
             },
             '/admin':{
-                target: "http://192.168.102.90:8081/",
+                target: "http://10.0.2.98:8081/",
                 changeOrigin: true,
 
             },

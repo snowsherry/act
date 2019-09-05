@@ -47,3 +47,32 @@ export const getLeftChance=()=>{
         url:baseUrlStock+"/guess/left",
     })
 }
+
+export  const getRankTotal=()=>{
+    return AxiosRequst({
+        method:"get",
+        url:baseUrlStock+"/rank/personal/regular",
+    })
+}
+export const getRankChallenge=(type)=>{
+    return AxiosRequst({
+        method:"get",
+        //http://10.0.2.98:8083/rank/personal/challenge/{type} Starts||Rate
+        url:baseUrlStock+`/rank/personal/challenge/${type}`,
+    })
+}
+
+export const getRankTeam=(type)=>{
+    return AxiosRequst({
+        method:"get",
+        //http://10.0.2.98:8083/rank/personal/challenge/{type} Starts||Rate
+        url:baseUrlStock+`/rank/team/${type}`,
+    })
+}
+export const getSeasonDetail=(id)=>{
+    return AxiosRequst({
+        method:"get",
+        //http://10.0.2.98:8083/rank/personal/challenge/{type} Starts||Rate
+        url:baseUrlStock+`/records/season/${id}`,
+    })
+}

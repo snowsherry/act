@@ -1,6 +1,6 @@
 <template>
     <div class="post" id="post" v-if="show">
-        <div class="post-content post1" id="post1" :class="[{'fade':fade}]">
+        <div class="post-content post1" id="post1" :class="[{'fade':fade}]" style="display: none;">
             <div class="title">年轻人爱用的资讯行情APP</div>
             <div class="logo"><img src="../../assets/image/post/logo.png" width="138"></div>
             <div class="slogans">
@@ -23,14 +23,17 @@
                 </div>
             </div>
         </div>
-        <div class="post-content post2"></div>
-        <img :src="imgData" v-if="imgData">
+        <div class="post-content post2" id="post2">
+            <img src="../../assets/image/post/post-campus.png" width="375">
+            <div id="qrcode2"></div>
+        </div>
     </div>
 </template>
 
 <script>
     import {mapGetters} from 'vuex'
     import html2canvas from  'html2canvas';
+    import {ShareWechat} from '../../api/mission'
     import vueHtml2canvas from 'vue-html2canvas'
     import QRCode from 'qrcodejs2'
     export default {
@@ -67,35 +70,44 @@
                }
             }
         },
-        methods:{
+        methods: {
             qrcode() {
                 let qrcode = new QRCode('qrcode', {
                     width: 64,
                     height: 64,
-                    text: process.env.VUE_APP_BASE_URL+'/new?inviteCode='+this.userInfo.inviteCode, // 二维码地址
-                    colorDark : "#000",
-                    colorLight : "#fff",
+                    text: process.env.VUE_APP_BASE_URL + '/new?inviteCode=' + this.userInfo.inviteCode, // 二维码地址
+                    colorDark: "#000",
+                    colorLight: "#fff",
+                })
+
+                let qrcode2 = new QRCode('qrcode2', {
+                    width: 64,
+                    height: 64,
+                    text: process.env.VUE_APP_BASE_URL + '/challenge?inviteCode=' + this.userInfo.inviteCode, // 二维码地址
+                    colorDark: "#000",
+                    colorLight: "#fff",
                 })
             },
-            setImg(){
-                this.show=true;
-                let options={
-                    scale:2,
+            setImg() {
+                this.show = true;
+                let options = {
+                    scale: 2,
                     useCORS: true
                 };
-                let that=this;
-                setTimeout(()=>{
-                    html2canvas(document.getElementById('post1'),options).then(function(canvas) {
-                        console.log('data url',canvas.toDataURL('image/png'))
-                        that.imgData=canvas.toDataURL('image/png');
-                        that.show=false;
+                let that = this;
+                setTimeout(() => {
+                    html2canvas(document.getElementById('post1'), options).then(function (canvas) {
+                        console.log('data url', canvas.toDataURL('image/png'))
+                        that.imgData = canvas.toDataURL('image/png');
+                        that.show = false;
+                        ShareWechat();
                         //that.fade=false;
                         /* //that.drawed=true;
                          //window.open(canvas.toDataURL('image/png'))*/
                     });
-                },200)
+                }, 200)
                 return;
-               /* this.$nextTick(()=>{
+                /* this.$nextTick(()=>{
                     /!*console.log('gggg')
                     html2canvas(document.getElementById('post1'),options).then(function(canvas) {
                         console.log('data url',canvas.toDataURL('image/png'))
@@ -107,6 +119,26 @@
                     });*!/
                 })*/
 
+            },
+            setImg2() {
+                this.show = true;
+                let options = {
+                    scale: 1,
+                    useCORS: true
+                };
+                let that = this;
+                setTimeout(() => {
+                    html2canvas(document.getElementById('post2'), options).then(function (canvas) {
+                        console.log('data url', canvas.toDataURL('image/png'))
+                        that.imgData = canvas.toDataURL('image/png');
+                        that.show = false;
+                        ShareWechat();
+                        //that.fade=false;
+                        /* //that.drawed=true;
+                         //window.open(canvas.toDataURL('image/png'))*/
+                    });
+                }, 200)
+                return;
             }
         }
     }
@@ -227,6 +259,18 @@
                 }
             }
 
+        }
+    }
+    .post2{
+        width: 375px;
+        height: 604px;
+        position: relative;
+        #qrcode2{
+            width: 64px;
+            height: 64px;
+            position: absolute;
+            bottom: 16px;
+            right: 20px;
         }
     }
 </style>

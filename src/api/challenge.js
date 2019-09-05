@@ -1,10 +1,41 @@
 import axios from 'axios';
-let baseUrl=process.env.NODE_ENV!=='development'?'http://10.0.2.98:8081/admin':'/admin';
-
+import {baseUrlChallenge} from "./base";
+let baseUrl=baseUrlChallenge;
 export const getSeasonDetail=(data)=>{
   return  axios.request({
         method:"post",
         url:baseUrl+'/season/get-season-detail?isSign='+data.isSign,
        // data:data
+    })
+}
+
+export const getAwardDetail=(type='ALL')=>{
+    return  axios.request({
+        method:"get",
+        url:baseUrl+'/rank/imgUrl',
+        params:{
+            type:type
+        }
+    })
+}
+
+export const getTodayCoinPool=()=>{
+    return  axios.request({
+            method:"post",
+            url:baseUrl+'/season/get-award',
+        })
+}
+
+export  const weChatLogin=(data)=> {
+    return  axios.request({
+            method:"post",
+            url:baseUrl+'/wechat/auth',
+            data:data
+        })
+}
+export const getSeasonHistory=()=>{
+    return  axios.request({
+        method:"post",
+        url:baseUrl+'/season/get-season-history',
     })
 }

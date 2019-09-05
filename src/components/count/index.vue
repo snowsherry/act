@@ -2,7 +2,7 @@
     <div class="counts">
             <span>{{txts[0]}}</span>
             <div class="nums">
-                <span class="num" v-for="i in nums">{{i}}</span>
+                <span class="num" v-for="i in nums.toString()">{{i}}</span>
             </div>
             <span>{{txts[1]}}</span>
     </div>

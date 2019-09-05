@@ -68,3 +68,13 @@ export  const openUrl=(url)=>{//字符串
 export  const closeSelf=()=> {
     return dsbridge.call("closeSelf");
 }
+export const  popCloseSelf=(params)=>{
+    return dsbridge.call("popCloseSelf",params);
+}
+export  const  goMarket=(code)=>{
+    console.log('code',code);
+    //let jumpUrl=`tsap://stock/detail?stockCode=${item.symbol}|${item.exchange}`;
+    let jumpUrl=`tsap://stock/detail?stockCode=${code}`;
+    location.href=jumpUrl;
+    return;
+}

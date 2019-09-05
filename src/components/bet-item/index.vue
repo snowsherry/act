@@ -6,7 +6,7 @@
                 <h3>{{item.name}}</h3>
                 <h5>{{item.symbol}}</h5>
             </div>
-            <div class="tag" v-if="item.labels">{{item.labels}}</div>
+            <div class="tag" v-if="item.labels" v-for="label  in item.labels.split(';')">{{label}}</div>
         </div>
         <h4>{{item.title}}</h4>
         <p class="desc">
@@ -15,7 +15,7 @@
         <div class="price">
             <span>最新价</span>
             <span class="price-item" :class="item.quotation.change>=0?'good':'bad'" v-if="item.quotation">{{item.quotation.close}}   {{item.quotation.change>0?`+${item.quotation.changePercent}`:item.quotation.changePercent}}%</span>
-            <div class="detail">个股详情 <img src="../../assets/image/bet/icon-arrow-to.png" width="6"> </div>
+            <div class="detail" @click="goMarket">个股详情 <img src="../../assets/image/bet/icon-arrow-to.png" width="6"> </div>
         </div>
         <div class="k-line">
             <img :src="item.kline" width="300" v-if="item.kline">
@@ -37,6 +37,7 @@
 <script>
     import betBtn from '../../components/bet-btn'
     import rateBar from '../../components/rate-bar'
+    import {goMarket} from '../../dsbridge'
     export default {
         name: "index",
         components:{
@@ -64,6 +65,9 @@
                 this.$emit('popBet',aim,this.item.symbol);
                 //this.betted=true;
                //this.trend=aim;
+            },
+            goMarket(){
+                goMarket(this.item.symbol);
             }
         }
     }

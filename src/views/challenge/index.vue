@@ -2,8 +2,8 @@
     <div class="challenge">
         <div class="top">
             <div class="slogan"></div>
-            <Count :txt="'已有-人参与'" :count="1000"></Count>
-            <div class="box unsgin" v-if="!joinInfo.joined">
+            <Count :txt="'已有-人参与'" :count="rule.userTotal"></Count>
+            <div class="box unsgin" v-if="!hasJoin">
                 <div class="roof"></div>
                 <div class="img"><img :src="rule['imgUrl']"  v-if="rule" width="308" height="146"/></div>
                 <Cbutton size="middle" type="red" txt="立即报名" class="big-btn sign-btn" :clickEvent="signIn"></Cbutton>
@@ -12,7 +12,7 @@
                 <div class="tick"></div>
                 <h2>您已报名成功</h2>
                 <h3>代表高校：{{joinInfo.school.name}}</h3>
-                <Cbutton size="middle" type="red" txt="前往赛场" class="big-btn sign-btn" :clickEvent="goSchool"></Cbutton>
+                <Cbutton size="middle" type="red" txt="前往赛场" class="big-btn sign-btn" :clickEvent="goDown"></Cbutton>
             </div>
         </div>
         <div class="rules">
@@ -68,12 +68,15 @@
     import Cbutton from '../../components/button'
     import Count from '../../components/count'
     import {INIT_JOIN_INFO,SET_JOIN_INFO} from '../../store/school'
-    import {getSeasonDetail} from '../../api/challenge'
+    import {getSeasonDetail,weChatLogin} from '../../api/challenge'
+    import {getParticipantInfo} from "../../api/school";
     import {InviteByWechat,BindMobile} from '../../api/mission'
-    import {SendConfirmationCode} from '../../api/account'
+    import {SendConfirmationCode,WeChatH5Login} from '../../api/account'
     import redBag from '../../components/red-bag'
-    import {getCurrentPage} from '../../utils'
+    import {getCurrentPage,goDownload} from '../../utils'
     import *  as tokenInWechat  from '../../localStorage/token'
+    import {goWxAuthor} from '../../api/wx'
+    import *  as token from '../../localStorage/token'
     import Vue from 'vue';
     import { Toast,CountDown} from 'vant';
 
@@ -87,7 +90,8 @@
         },
         data(){
             return{
-                signed:false,
+                hasJoin:false,
+                binded:false,
                 popBox:{
                     show:false,
                     mobile:{
@@ -114,6 +118,7 @@
                 //倒计时
                 time:60*1000,
                 isCountDown:false,
+                tokenInWechat:token.get()
             }
         },
         computed:{
@@ -132,6 +137,7 @@
         beforeMount(){
            /* this.initJoinInfo();//异步的事件哇
             console.log('dddd',this.joinInfo);*/
+            this.getParticipantInfo();
             this.getRule();
             //console.log('getCurrentPage',getCurrentPage())
            /* let query=this.$route.query;
@@ -153,21 +159,90 @@
                     console.log('res is',res);
                 })
             }*/
+            if(this.tokenInWechat){//已经微信授权注册了
+                //接口获取 是否绑定手机号 是否加入已经战队
 
-            if(this.token){
-                //判断是否已经输入手机 和是否已经报名
+                //this.showPopBoxMobile();
+            }else{//走微信授权登陆
+                let query=this.$route.query;
+               // this.inviteCode=query.inviteCode;
+                if(query&&query.code){
+                    this.code=query.code;
+                    //获取用户的信息
+                    /* getAccessToken(this.code).then(res=>{
+                         console.log('res',res);
+                     }).catch(e=>{
+                         console.error(e);
+                     });*/
+                    weChatLogin({
+                        //appId:'wxa0640e322b3416ee',
+                        code:this.code,
+                       // inviteCode:this.inviteCode
+                    }).then(res=>{
+                        console.log('reigister result is',res);
+                        if(res.data.code==19){//已注册并绑定手机号码了
+                            this.binded=true;//无法获取token 没法getToken 无法获取战队信息
+                        }else if(res.data.code==0){//判断其他信息 也是注册的信息
+                            //this.authored=true;
+                            let data=res.data.data;
+                            token.set(data.token);
+                            if(data.hasMobile){
+                                this.binded=true;
+                            }
+
+                        }
+                    })
+                }
             }
-            this.showPopBoxMobile();
+
+
         },
         methods:{
+            goDown(){
+                goDownload();
+            },
             ...mapMutations('school',{
                 setJoinInfo:SET_JOIN_INFO
             }),
             ...mapActions('school',{
                 initJoinInfo:INIT_JOIN_INFO
             }),
+            getParticipantInfo(){
+                getParticipantInfo().then(res=>{
+                    let data=res.data;
+                    if(data.is_select_team) {
+                        this.hasJoin=true;
+                        let joinInfo={
+                            joined:true,
+                            school:{
+                                name:data.team_name,
+                                code:"",
+                            }
+                        }
+                        this.setJoinInfo(joinInfo);
+
+                    }
+                    if(data.is_bind_mobile) {
+                        this.binded=true;
+                    }
+
+                })
+            },
             signIn(){
+                if(!this.code&&!this.token){//走授权登陆
+                    let url=location.href;
+                    /*  console.log('url',url);
+                      return;*/
+                    goWxAuthor(url);
+                    return;
+                }
                 //this.signed=true;
+                //判断是否绑定手机号码
+                if(this.binded){
+                    this.showPopBoxSchool();
+                }else{
+                    this.showPopBoxMobile();
+                }
 
             },
             showPopBoxMobile(){

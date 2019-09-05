@@ -51,6 +51,7 @@
                         this.signed=true;
                         this.days=this.days+1;
                         Toast.success('签到成功');
+                        this.$emit('signed');
 
                     }
                     }).catch(e=>{

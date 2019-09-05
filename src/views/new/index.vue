@@ -35,7 +35,7 @@
                         <div class="yuan">元</div>
                     </div>
                 </div>
-                <div class="down-btn">下载APP体验并提现</div>
+                <div class="down-btn" @click="goDownload">下载APP体验并提现</div>
             </div>
         </div>
     </div>
@@ -44,7 +44,9 @@
 <script>
     import {goWxAuthor,getAccessToken} from '../../api/wx'
     import {InviteByWechat,BindMobile} from '../../api/mission'
-    import {SendConfirmationCode} from '../../api/account'
+    import {SendConfirmationCode,getUserInfo} from '../../api/account'
+    import {goDownload} from "../../utils";
+    import * as token from '../../localStorage/token'
     import Vue from 'vue';
     import { Toast,CountDown} from 'vant';
 
@@ -53,7 +55,7 @@
         name: "index",
         data(){
             return {
-                authored:false,//授权
+                authored:false,//授权 即注册
                 binded:false,//绑定号码
                 opened:false,
                 code:"",
@@ -64,37 +66,69 @@
                 //倒计时
                 time:60*1000,
                 isCountDown:false,
+                tokenInWechat:token.get()
 
             }
         },
         beforeMount(){
-            let query=this.$route.query;
-            this.inviteCode=query.inviteCode;
-            if(query&&query.code){
-                this.code=query.code;
-                console.log('555')
-                //获取用户的信息
-               /* getAccessToken(this.code).then(res=>{
-                    console.log('res',res);
-                }).catch(e=>{
-                    console.error(e);
-                });*/
-                InviteByWechat({
-                    appId:'wxa0640e322b3416ee',
-                    code:this.code,
-                    inviteCode:this.inviteCode
-                }).then(res=>{
-                    alert('res is',JSON.stringify(res));
-                })
+            if(this.tokenInWechat){//有token==注册过
+                this.authored=true;
+                this.getUserInfo();//判断是否有手机号码
+            }else{//未注册过
+                let query=this.$route.query;
+                this.inviteCode=query.inviteCode;
+                if(query&&query.code){
+                    this.code=query.code;
+                    //获取用户的信息
+                    /* getAccessToken(this.code).then(res=>{
+                         console.log('res',res);
+                     }).catch(e=>{
+                         console.error(e);
+                     });*/
+                    InviteByWechat({
+                        //appId:'wxa0640e322b3416ee',
+                        code:this.code,
+                        inviteCode:this.inviteCode
+                    }).then(res=>{
+                        console.log('reigister result is',res);
+                        if(res.data.code==19){//已注册
+                            this.authored=true;
+                            this.binded=true;
+                        }else if(res.data.code==0){//判断其他信息 也是注册的信息
+                            this.authored=true;
+                            let data=res.data.data;
+                            token.set(data.token);
+                            if(data.hasMobile){
+                                this.binded=true;
+                            }
+
+                        }
+                    })
+                }
             }
         },
         methods:{
+            goDownload(){
+                goDownload();
+            },
+
+            getUserInfo(){
+                getUserInfo().then(res=>{
+                    if(res.data.code==0){
+                        let data=res.data.data;
+                        if(data.mobile){
+                            this.binded=true;
+                        }
+                    }
+                })
+            },
+
             goOpen(){
                 /*this.authored=true;
                 return;*/
                 if(this.code){//已经登陆有code了
                     //开启红包 带上用户的信息
-
+                   this.authored=true;
                 }else{//未登陆
                     let state='test';
                     let url=window.location.href;

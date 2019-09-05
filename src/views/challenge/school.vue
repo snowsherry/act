@@ -68,7 +68,7 @@
             },
             chooseSchool(){
                 addTeam({
-                    season_id:1,
+                    //season_id:1,
                     team_id:this.selectedSchool.id,
                 }).then(res=>{
                    if(res.data.error==0){//

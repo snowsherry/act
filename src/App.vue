@@ -18,9 +18,8 @@
         setUserInfo:SET_USER_INFO,
         setCoin:SET_COIN
       }),
-      Init(){
+      /*Init(){
         if(isWeiXin()){//注入JSSDk配置
-          alert('6666');
           let timestamp=new Date().getTime();
           let data={
             noncestr:nonceStr,
@@ -38,7 +37,7 @@
               jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage','updateAppMessageShareData','updateTimelineShareData'] // 必填，需要使用的JS接口列表
             });
 
-            /*wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
+            /!*wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
               wx.updateAppMessageShareData({
                 title: '你是真的牛皮', // 分享标题
                 desc: '你是真的牛皮-内容', // 分享描述
@@ -49,7 +48,7 @@
                   alert('分享才刚刚');
                 }
               })
-            });*/
+            });*!/
 
           });
           return;
@@ -57,7 +56,7 @@
         }else{
 
         }
-      }
+      }*/
     },
     created(){
       GetUserCoin().then(res=>{
@@ -71,7 +70,7 @@
       })
 
 
-      this.Init();
+      //this.Init();
 
       wx.ready(function(){
        // alert('fffffff','ready');

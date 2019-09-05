@@ -1,17 +1,28 @@
 <template>
     <div class="card">
-        <div class="top">
-            <span class="season">2019.07.26-08.02赛季</span>
-            <span class="update">数据更新：07.31 14:15</span>
-        </div>
-        <div class="center" v-if="type=='personal'">
-            <h4>本赛季奖池</h4>
-            <div class="pool">
-                <span v-for="i in '1000'">{{i}}</span>
+        <div class="card1" v-if="type=='personal'&&personalData">
+            <div class="top">
+                <span class="season">{{personalData.startTime | convertToday}}-{{personalData.endTime | convertToday}}赛季</span>
+                <!-- <span class="update">数据更新：07.31 14:15</span>-->
             </div>
-            <div class="title">赛季结束满10星玩家可参与瓜分</div>
+            <div class="center">
+                <h4>本赛季奖池</h4>
+                <div class="pool">
+                    <span v-for="i in personalData.award.toString()">{{i}}</span>
+                </div>
+                <div class="title">赛季结束满10星玩家可参与瓜分</div>
+            </div>
         </div>
-        <div class="prize" v-else>
+        <div class="card2" v-if="type=='school'&&schoolData">
+            <div class="prize-img"></div>
+            <div class="top">
+                <span class="season">{{schoolData.startTime | convertToday}}-{{schoolData.endTime | convertToday}}赛季</span>
+                <!-- <span class="update">数据更新：07.31 14:15</span>-->
+            </div>
+        </div>
+
+
+       <!-- <div class="prize" v-else>
             <div class="prize-item">
                 <div class="s1">
                     <img src="../../assets/image/rank/medal-gold.png">
@@ -36,17 +47,41 @@
                 </div>
                 <span>奖励详情从后台抓取奖励详情从后台抓取</span>
             </div>
-        </div>
+        </div>-->
     </div>
 </template>
 
 <script>
+    import {getSeasonDetail,getAwardDetail} from '../../api/challenge'
     export default {
         name: "card",
         props:{
             type:{
                 type:String
             }
+        },
+        data(){
+            return{
+                personalData:null,
+                schoolData:null,
+            }
+
+        },
+        filters:{
+            convertToday(time){
+                    return time.replace(/\s.*?$/g,'').replace(/-/g,'.');
+            }
+        },
+        beforeMount(){
+            getSeasonDetail({
+                isSign: false
+            }).then(res=>{
+                console.log("regular",res);
+                this.personalData=res.data.data;
+            })
+            getAwardDetail().then(res=>{
+                this.schoolData=res.data.data;
+            })
         }
     }
 </script>
@@ -55,8 +90,13 @@
     .card{
         width: 345px;
         //height:162px;
-        background:linear-gradient(134deg,rgba(10,0,180,1) 0%,rgba(77,67,255,1) 100%);
         border-radius:6px;
+        overflow: hidden;
+            
+        .card1{
+            background:linear-gradient(134deg,rgba(10,0,180,1) 0%,rgba(77,67,255,1) 100%);
+            
+        }
         .top{
             width: 100%;
             padding: 10px 12px;
@@ -158,6 +198,23 @@
                     opacity:0.5;
                     margin-left:6px ;
                 }
+            }
+        }
+        .card2{
+            position: relative;
+            width: 100%;
+            .prize-img{
+                background:linear-gradient(134deg,rgba(10,0,180,1) 0%,rgba(77,67,255,1) 100%);
+                width: 345px;
+                height:190px;
+            }
+            .top{
+                position: absolute;
+                left: 0;
+                top:0;
+                width: 100%;
+                padding: 10px 12px;
+
             }
         }
     }

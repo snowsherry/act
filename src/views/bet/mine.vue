@@ -6,56 +6,58 @@
                     <div class="avatar"><img :src="userInfo.avatar"  width="48" height="48"></div>
                     <div class="info">
                         <h4>{{userInfo.wechatUserName}}</h4>
-                        <h5>历史最佳排名 23</h5>
+                        <!--<h5>历史最佳排名 23</h5>-->
                     </div>
                 </div>
-                <div class="top-right">
+                <div class="top-right" v-if="is_select_team">
                     <h5>代表高校</h5>
-                    <div class="school">上海财经大学</div>
+                    <div class="school">{{team_name}}</div>
                 </div>
             </div>
             <div class="summary">
                 <div class="summary-item">
-                    <h4>3<span>次</span></h4>
+                    <h4>{{chance}}<span>次</span></h4>
                     <h5>当日机会</h5>
                 </div>
                 <div class="summary-item">
-                    <h4><img src="../../assets/image/star-big.png">11</h4>
+                    <h4><img src="../../assets/image/star-big.png">{{seasonList[0]['info']['gain']}}</h4>
                     <h5>已获得（本赛季）</h5>
                 </div>
                 <div class="summary-item">
-                    <h4>46%</h4>
+                    <h4>{{seasonList[0]['info'].totalCount>0?Math.round(seasonList[0]['info'].correctCount/seasonList[0]['info'].totalCount):0}}%</h4>
                     <h5>赛季胜率</h5>
                 </div>
             </div>
         </div>
         <div class="bet-history">
-            <div class="season-list" v-for="j in 3">
-                <div class="season-date">
+            <div class="season-list" v-for="(season,k) in seasonList">
+                <div class="season-date" @click="toggleListShow(k)">
                     <div class="red-line"></div>
-                    <div class="date">8月2日-8月9日赛季</div>
-                    <div class="star"><img src="../../assets/image/icon-star-s.png">+12</div>
-                    <div class="coin"><img src="../../assets/image/icon-coin-s.png">+40</div>
-                    <div class="icon on"></div>
+                    <div class="date">{{season.startTime | convertToday }}-{{season.endTime | convertToday }}赛季</div>
+                    <!--<div class="star"><img src="../../assets/image/icon-star-s.png">+12</div>
+                    <div class="coin"><img src="../../assets/image/icon-coin-s.png">+40</div>-->
+                    <div class="icon" :class="[{'on':season.show}]"></div>
                 </div>
-                <div class="result">
-                    <span class="d1">预言次数：4次</span>
-                    <span class="d2">胜率：50%</span>
-                    <span class="d3">瓜分成功：+10万金币</span>
-                </div>
-                <div class="bet-list">
-                    <div class="bet-list-item" v-for="i in 5">
-                        <div class="s1">
-                            <h2>阿里健康</h2>
-                            <p>8月8日 13:38点</p>
+                <div v-if="season.show">
+                    <div class="result">
+                        <span class="d1">预言次数：{{season.info.totalCount}}次</span>
+                        <span class="d2">胜率：{{season.info.totalCount>0?Math.round(season.info.correctCount/season.info.totalCount):0}}%</span>
+                        <span class="d3">瓜分成功：+{{season.info.gain}}金币</span>
+                    </div>
+                    <div class="bet-list"  v-if="season.info.records">
+                        <div class="bet-list-item" v-for="historyItem in season.info.records">
+                            <div class="s1">
+                                <h2>{{historyItem.symbol}}</h2>
+                                <p>{{historyItem.createTime}}</p>
+                            </div>
+                            <div class="s2">{{historyItem.chip}}金币预测看{{historyItem.side=='Long'?'涨':'跌'}}</div>
+                            <div class="s3" v-if="historyItem.isCorrect.toLowerCase()=='correct'">
+                                <img src="../../assets/image/icon-coin-s.png">
+                                +{{historyItem.chip+historyItem.coinsPnl}}
+                            </div>
+                            <div class="s3" v-else></div>
+                            <div class="s4" :class="[{'success':historyItem.isCorrect.toLowerCase()=='correct'}]">{{historyItem.isCorrect.toLowerCase()=='canceled'?'取消':historyItem.isCorrect.toLowerCase()=='correct'?'成功':'失败'}}</div>
                         </div>
-                        <div class="s2">100金币预测看跌</div>
-                        <div class="s3" v-if="i%2==1">
-                            <img src="../../assets/image/icon-coin-s.png">
-                            +4000
-                        </div>
-                        <div class="s3" v-else></div>
-                        <div class="s4" :class="[{'success':i%2==1}]">失败</div>
                     </div>
                 </div>
             </div>
@@ -65,13 +67,35 @@
 
 <script>
     import {mapGetters,mapMutations,mapActions} from 'vuex'
+    import {getParticipantInfo} from "../../api/school";
+    import {getSeasonHistory} from "../../api/challenge";
+    import {getSeasonDetail} from '../../api/stock'
     import  {SET_NAV} from '../../store/bet'
     export default {
         name: "mine",
         computed:{
             ...mapGetters('user',{
                 userInfo:'getUserInfo',
-            })
+            }),
+            ...mapGetters('bet',{
+                chance:'getChance',
+            }),
+        },
+        data(){
+            return {
+                is_select_team:false,
+                team_name:'',
+                topData:{
+                    stars:0,
+                    rate:0
+                },
+                seasonList:[],
+            }
+        },
+        filters:{
+            convertToday(time){
+                return time.replace(/\s.*?$/g,'').replace(/-/g,'.');
+            }
         },
         methods:{
             ...mapMutations('bet',{
@@ -79,11 +103,59 @@
             }),
             closePopBox(){
 
+            },
+            toggleListShow(i){
+                let aim=!this.seasonList[i].show;
+                if(aim){
+                    if( !this.seasonList[i]['info']){
+                        this.getSeasonDetail(i);
+                    }
+                }
+                this.seasonList[i].show=aim;
+
+            },
+            getParticipantInfo(){
+                getParticipantInfo().then(res=>{
+                    let data=res.data;
+                    if(data.is_select_team) {
+                        this.is_select_team=true;
+                        this.team_name=data.team_name;
+                    }
+
+                })
+            },
+            getSeasonHistory(){
+                getSeasonHistory(false).then(res=>{
+                    console.log('getSeasonHistory',res)
+                    let data=res.data.data;
+                    let list=[];
+                    list=data.list.map((item,k)=>{
+                            item.show=false;
+                          item.info=null;
+                      return item;
+                    })
+                    this.seasonList=list;
+                    if(data.list.length>0){//当
+                        this.getSeasonDetail(0);
+                    }
+
+
+                })
+            },
+            getSeasonDetail(index){
+                getSeasonDetail(this.seasonList[index]['id']).then(res=>{
+                    let data=res.data.data;
+                    this.$set(this.seasonList[index],'info',data);
+                   // this.seasonDetailObj[index]=Object.assign(this.seasonDetailObj[index],data);
+
+                })
             }
         },
 
         beforeMount(){
             this.setNav('mine');
+            this.getParticipantInfo();
+            this.getSeasonHistory();
         }
     }
 </script>
@@ -253,8 +325,10 @@
                         height: 5px;
                         background: url('../../assets/image/bet/icon-up.png');
                         background-size: cover;
+                        text-align: right;
+                        transform: rotateZ(180deg);
                         &.on{
-                            transform: rotateZ(180deg);
+                            transform: rotateZ(0deg);
                         }
                     }
 

@@ -4,19 +4,39 @@
             <van-tab title="个人排行榜">
                 <div class="rank-part personal">
                     <Card class="card" :type="'personal'"></Card>
-                    <rankItem :itemInfo="itemInfo" :type="'personal'" :own="'mine'"></rankItem>
-                    <rankItem v-for="item in items" :itemInfo="item" :type="'personal'" :own="'other'"></rankItem>
+                    <rankItem :itemInfo="rankTotal.current" :type="'personal'" :own="'mine'" v-if="rankTotal&&rankTotal.current"></rankItem>
+                    <rankItem v-for="item in rankTotal.list" :itemInfo="item" :type="'personal'" :own="'other'"></rankItem>
+                    <!--<rankItem v-for="item in rankTotal.list" :itemInfo="item" :type="'school'" :own="'mine'" :direction="'tr'" ></rankItem>-->
                 </div>
             </van-tab>
             <van-tab title="高校排行榜">
                 <div class="rank-part school">
                     <div class="school-nav">
-                        <div class="school-nav-item cur">个人摘星榜</div>
-                        <div class="school-nav-item">个人胜率榜</div>
-                        <div class="school-nav-item">战队摘星榜</div>
-                        <div class="school-nav-item">战队胜率榜</div>
+                        <div class="school-nav-item" v-for="(item,i) in schoolNavs" :class="[{'cur':i==schoolNavCur}]" @click="selectCur(i)">{{item}}</div>
                     </div>
-                    <Card class="card" :type="'school'"></Card>
+                    <div class="content" v-show="schoolNavCur==0">
+                        <Card class="card" :type="'school'"></Card>
+                        <rankItem :itemInfo="personalStar.current" :type="'school'" :own="'mine'"  :direction="'ps'" v-if="personalStar&&personalStar.current"></rankItem>
+                        <rankItem v-for="item in personalStar.list" :itemInfo="item" :type="'school'" :own="'other'" :direction="'ps'"></rankItem>
+                    </div>
+                    <div class="content" v-show="schoolNavCur==1">
+                        <Card class="card" :type="'school'"></Card>
+                        <rankItem :itemInfo="personalRate.current" :type="'school'" :own="'mine'" :direction="'pr'" v-if="personalRate&&personalRate.current"></rankItem>
+                        <rankItem v-for="item in personalRate.list" :itemInfo="item" :type="'school'" :direction="'pr'" :own="'other'"></rankItem>
+                    </div>
+
+                    <div class="content" v-show="schoolNavCur==2">
+                        <Card class="card" :type="'school'"></Card>
+                        <rankItem :itemInfo="teamStar.current" :type="'school'" :own="'mine'" :direction="'ts'" v-if="teamStar&&teamStar.current"></rankItem>
+                        <rankItem v-for="item in teamStar.list" :itemInfo="item" :type="'school'" :direction="'ts'" :own="'other'"></rankItem>
+                    </div>
+
+                    <div class="content" v-show="schoolNavCur==3">
+                        <Card class="card" :type="'school'"></Card>
+                        <rankItem :itemInfo="teamRate.current" :type="'school'" :own="'mine'" :direction="'tr'"  v-if="teamRate&&teamRate.current"></rankItem>
+                        <rankItem v-for="item in teamRate.list" :itemInfo="item" :type="'school'" :direction="'tr'"  :own="'other'"></rankItem>
+                    </div>
+
                 </div>
             </van-tab>
         </van-tabs>
@@ -24,10 +44,11 @@
 </template>
 
 <script>
+    import {getRankTotal,getRankTeam,getRankChallenge} from  '../../api/stock'
+    import {getAwardDetail} from '../../api/challenge'
     import Vue from 'vue';
     import { Tab, Tabs } from 'vant';
     Vue.use(Tab).use(Tabs);
-
     import {mapGetters,mapActions,mapMutations} from 'vuex'
     import {SET_NAV} from '../../store/bet'
     import Card from '../../components/rank/card'
@@ -37,13 +58,21 @@
             data(){
                 return {
                     active:0,
-                    itemInfo:{
-                        rank:1,
-                        name:"易秀英",
-                        rate:99,
-                        starNum:123,
+                    rankTotal:{
+                        current:null,
+                        list:[]
                     },
-                    items:null,
+                    personalStar:null,
+                    personalRate:null,
+                    teamStar:null,
+                    teamRate:null,
+                    schoolNavCur:0,
+                    schoolNavs:[
+                        '个人摘星榜',
+                        '个人胜率榜',
+                        '战队摘星榜',
+                        '战队胜率榜'
+                    ]
                 }
             },
         components:{
@@ -54,22 +83,43 @@
             ...mapMutations('bet',{
                 setNav:SET_NAV
             }),
-            setItems(){
-                    let aim=[];
-                    for(let i=0;i<10;i++){
-                        aim[i]=Object.assign(
-                           this.itemInfo,{
-                               rank:i
-                            }
-                        )
-                    }
-                    this.items=aim;
+            getAwardDetail(){
+                getAwardDetail().then(res=>{
+                    console.log('res');
+                })
             },
+            getRankTotal(){
+                getRankTotal().then(res=>{
+                   if(res.data.code==0){
+                       this.rankTotal=res.data.data;
+                   }
+                })
+            },
+            selectCur(i){
+                this.schoolNavCur=i;
+            }
         },
         beforeMount() {
             this.setNav('rank');
             //设置Mock数据
-            this.setItems();
+            this.getRankTotal();
+            this.getAwardDetail();
+            //获取高校排行榜榜单
+            getRankChallenge('Stars').then(res=>{
+                this.personalStar=res.data.data;
+            })
+            getRankChallenge('Rate').then(res=>{
+                this.personalRate=res.data.data;
+            })
+            getRankTeam('Stars').then(res=>{
+                this.teamStar=res.data.data;
+            })
+
+            getRankTeam('Rate').then(res=>{
+                this.teamRate=res.data.data;
+            })
+
+
         }
     }
 </script>
